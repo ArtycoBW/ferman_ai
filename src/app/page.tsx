@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
 import { Header } from '@/components/layout/header'
@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
 
-export default function HomePage() {
+function HomePageContent() {
   const { isAuthenticated, isLoading, login } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -104,5 +104,19 @@ export default function HomePage() {
         © 2025 Ferman AI · Аналитика закупок
       </footer>
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+        </div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   )
 }

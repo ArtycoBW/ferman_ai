@@ -100,7 +100,7 @@ export function AnalysisStatus({ status, isLoading, error }: AnalysisStatusProps
         {callback?.details && (
           <div className="text-xs text-muted-foreground mb-2">{callback.details}</div>
         )}
-        <Progress value={undefined} className="h-1.5" />
+        <Progress value={0} className="h-1.5" />
       </CardContent>
     </Card>
   )

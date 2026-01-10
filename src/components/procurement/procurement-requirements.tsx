@@ -35,6 +35,8 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
 
   const requirements = lot.requirements?.requirement || []
   const preferences = lot.preferences?.preferense || []
+  const customers = lot.customers?.customer || []
+  const enforcement = customers[0]?.enforcement
   const additionalRequirements = requirements.filter(r => r.addRequirements && r.addRequirements.length > 0)
 
   return (
@@ -42,46 +44,48 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
       <h2 className="text-lg font-semibold">Условия участия — Лот {lot.lotNumber}</h2>
 
       {/* Обеспечения */}
-      <div className="bg-white rounded-lg border border-slate-200">
-        <div className="px-4 py-3 border-b border-slate-200">
-          <h3 className="font-semibold text-slate-900">Обеспечения</h3>
+      {enforcement && (
+        <div className="bg-white rounded-lg border border-slate-200">
+          <div className="px-4 py-3 border-b border-slate-200">
+            <h3 className="font-semibold text-slate-900">Обеспечения</h3>
+          </div>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-100">
+                <th className="text-left py-3 px-4 font-medium text-slate-600"></th>
+                <th className="text-right py-3 px-4 font-medium text-slate-600">Сумма</th>
+                <th className="text-right py-3 px-4 font-medium text-slate-600 w-24">Процент</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-slate-100">
+                <td className="py-3 px-4">
+                  <span className="text-slate-900">Обеспечение заявки</span>
+                  <span className="text-slate-400 text-xs ml-2">(applicationGuaranteeAmount, applicationGuaranteePart)</span>
+                </td>
+                <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(enforcement.applicationGuaranteeAmount)}</td>
+                <td className="py-3 px-4 text-right text-slate-600">{formatPercent(enforcement.applicationGuaranteePart)}</td>
+              </tr>
+              <tr className="border-b border-slate-100">
+                <td className="py-3 px-4">
+                  <span className="text-slate-900">Обеспечение исполнения контракта</span>
+                  <span className="text-slate-400 text-xs ml-2">(contractGuaranteeAmount, contractGuaranteePart)</span>
+                </td>
+                <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(enforcement.contractGuaranteeAmount)}</td>
+                <td className="py-3 px-4 text-right text-slate-600">{formatPercent(enforcement.contractGuaranteePart)}</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4">
+                  <span className="text-slate-900">Обеспечение гарантийных обязательств</span>
+                  <span className="text-slate-400 text-xs ml-2">(contractProvisionWarrantyAmount, contractProvisionWarrantyPart)</span>
+                </td>
+                <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(enforcement.contractProvisionWarrantyAmount)}</td>
+                <td className="py-3 px-4 text-right text-slate-600">{formatPercent(enforcement.contractProvisionWarrantyPart)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-100">
-              <th className="text-left py-3 px-4 font-medium text-slate-600"></th>
-              <th className="text-right py-3 px-4 font-medium text-slate-600">Сумма</th>
-              <th className="text-right py-3 px-4 font-medium text-slate-600 w-24">Процент</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-slate-100">
-              <td className="py-3 px-4">
-                <span className="text-slate-900">Обеспечение заявки</span>
-                <span className="text-slate-400 text-xs ml-2">(applicationGuaranteeAmount, applicationGuaranteePart)</span>
-              </td>
-              <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(lot.enforcement.applicationGuaranteeAmount)}</td>
-              <td className="py-3 px-4 text-right text-slate-600">{formatPercent(lot.enforcement.applicationGuaranteePart)}</td>
-            </tr>
-            <tr className="border-b border-slate-100">
-              <td className="py-3 px-4">
-                <span className="text-slate-900">Обеспечение исполнения контракта</span>
-                <span className="text-slate-400 text-xs ml-2">(contractGuaranteeAmount, contractGuaranteePart)</span>
-              </td>
-              <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(lot.enforcement.contractGuaranteeAmount)}</td>
-              <td className="py-3 px-4 text-right text-slate-600">{formatPercent(lot.enforcement.contractGuaranteePart)}</td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4">
-                <span className="text-slate-900">Обеспечение гарантийных обязательств</span>
-                <span className="text-slate-400 text-xs ml-2">(contractProvisionWarrantyAmount, contractProvisionWarrantyPart)</span>
-              </td>
-              <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(lot.enforcement.contractProvisionWarrantyAmount)}</td>
-              <td className="py-3 px-4 text-right text-slate-600">{formatPercent(lot.enforcement.contractProvisionWarrantyPart)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      )}
 
       {/* Требования к участнику (ЕИС) */}
       {requirements.length > 0 && (

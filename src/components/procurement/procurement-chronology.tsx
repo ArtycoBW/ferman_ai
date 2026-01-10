@@ -2,8 +2,16 @@
 
 import { formatDateTime } from '@/lib/format'
 
+interface ChronologyEvent {
+  event?: string
+  type?: string
+  date?: string
+  description?: string
+  [key: string]: unknown
+}
+
 interface ProcurementChronologyProps {
-  chronology: Record<string, unknown>[]
+  chronology: ChronologyEvent[]
 }
 
 export function ProcurementChronology({ chronology }: ProcurementChronologyProps) {
@@ -24,16 +32,16 @@ export function ProcurementChronology({ chronology }: ProcurementChronologyProps
             <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
             <div className="flex-1">
               <div className="text-sm font-medium text-slate-900">
-                {String(event.event || event.type || 'Событие')}
+                {event.event || event.type || 'Событие'}
               </div>
               {event.date && (
                 <div className="text-xs text-slate-500 mt-1">
-                  {formatDateTime(String(event.date))}
+                  {formatDateTime(event.date)}
                 </div>
               )}
               {event.description && (
                 <div className="text-sm text-slate-600 mt-2">
-                  {String(event.description)}
+                  {event.description}
                 </div>
               )}
             </div>
