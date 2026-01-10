@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 15% 96%;
+    --foreground: 213 27% 24%;
+    --card: 0 0% 100%;
+    --card-foreground: 213 27% 24%;
+    --primary: 207 44% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 18% 93%;
+    --secondary-foreground: 213 27% 24%;
+    --muted: 210 14% 89%;
+    --muted-foreground: 213 15% 50%;
+    --accent: 207 44% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 18% 87%;
+    --input: 210 18% 87%;
+    --ring: 207 44% 65%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+.animated-bg {
+  background: linear-gradient(
+    135deg,
+    hsl(210, 15%, 96%),
+    hsl(207, 25%, 92%),
+    hsl(210, 18%, 94%),
+    hsl(207, 20%, 90%),
+    hsl(210, 15%, 96%)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 12s ease infinite;
+}
+
+.grid-pattern {
+  background-image: 
+    linear-gradient(rgba(147, 170, 192, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(147, 170, 192, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.floating-orbs {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float 20s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(147, 170, 192, 0.25) 0%, transparent 70%);
+  top: -200px;
+  right: -150px;
+  animation-duration: 18s;
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(130, 160, 190, 0.2) 0%, transparent 70%);
+  bottom: -150px;
+  left: -100px;
+  animation-delay: -6s;
+  animation-duration: 22s;
+}
+
+.orb-3 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(160, 180, 200, 0.18) 0%, transparent 70%);
+  top: 30%;
+  left: 50%;
+  animation-delay: -12s;
+  animation-duration: 25s;
+}
+
+.orb-4 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(140, 165, 190, 0.15) 0%, transparent 70%);
+  top: 60%;
+  right: 20%;
+  animation-delay: -8s;
+  animation-duration: 20s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -25px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(-25px, -15px) scale(1.02); }
+}
+
+.input-glow:focus {
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
