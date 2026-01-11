@@ -56,23 +56,23 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
                   <div className="font-medium text-slate-900">{obj.name}</div>
                 </td>
                 <td className="py-3 px-4">
-                  {obj.okpd2 ? (
+                  {obj.OKPD2 ? (
                     <>
-                      <div className="font-mono text-xs text-slate-700">{obj.okpd2}</div>
-                      {obj.okpd2Name && <div className="text-xs text-slate-500 mt-0.5">{obj.okpd2Name}</div>}
+                      <div className="font-mono text-xs text-slate-700">{obj.OKPD2}</div>
+                      {obj.OKPD2NAME && <div className="text-xs text-slate-500 mt-0.5">{obj.OKPD2NAME}</div>}
                     </>
                   ) : (
                     <span className="text-slate-400">—</span>
                   )}
                 </td>
                 <td className="py-3 px-4">
-                  {obj.ktru ? (
-                    <span className="font-mono text-xs text-slate-700">{obj.ktru}</span>
+                  {obj.KTRU ? (
+                    <span className="font-mono text-xs text-slate-700">{obj.KTRU}</span>
                   ) : (
                     <span className="text-slate-400">—</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-slate-600">{obj.okeiName || '—'}</td>
+                <td className="py-3 px-4 text-slate-600">{obj.OKEINAME || '—'}</td>
                 <td className="py-3 px-4 text-right text-slate-600">{obj.quantity != null ? obj.quantity : '—'}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(obj.price)}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(obj.sum)}</td>

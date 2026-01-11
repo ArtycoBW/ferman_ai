@@ -199,10 +199,10 @@ export interface ProcedureInfo {
 export interface PurchaseObject {
   number: number
   name: string
-  okpd2: string
-  okpd2Name: string
-  ktru: string | null
-  okeiName: string | null
+  OKPD2: string
+  OKPD2NAME: string
+  KTRU: string | null
+  OKEINAME: string | null
   quantity: number | null
   price: number | null
   sum: number | null

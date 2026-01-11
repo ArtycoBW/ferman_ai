@@ -43,7 +43,7 @@ function InfoRow({ label, fieldName, value }: { label: string; fieldName: string
 export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   const [copied, setCopied] = useState(false)
 
-  const deadlineInfo = getDeadlineInfo(procurement.procedureInfo.end, procurement.cancelled)
+  const deadlineInfo = getDeadlineInfo(procurement.procedureInfo.summarizingDate, procurement.cancelled)
   const lot = procurement.lots?.lot?.[0]
   const customer = lot?.customers?.customer?.[0]
   const enforcement = customer?.enforcement
@@ -118,8 +118,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         <KPICard
           label="Дедлайн подачи"
           fieldName="procedureEnd"
-          value={formatDateTime(procurement.procedureInfo.end)}
-          subValue={deadlineInfo.text}
+          value={formatDateTime(procurement.procedureInfo.summarizingDate)}
           colorClass={deadlineInfo.colorClass}
         />
         <KPICard
