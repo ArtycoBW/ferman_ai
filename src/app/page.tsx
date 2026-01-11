@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
 import { Header } from '@/components/layout/header'
@@ -15,6 +15,7 @@ function HomePageContent() {
   const searchParams = useSearchParams()
   const [isProcessingCallback, setIsProcessingCallback] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const callbackProcessedRef = useRef(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -25,7 +26,8 @@ function HomePageContent() {
     const code = searchParams.get('code')
     const state = searchParams.get('cid')
 
-    if (code && state && !isProcessingCallback) {
+    if (code && state && !isProcessingCallback && !callbackProcessedRef.current) {
+      callbackProcessedRef.current = true
       setIsProcessingCallback(true)
 
       const handleYandexCallback = async () => {
@@ -45,6 +47,7 @@ function HomePageContent() {
             description: error instanceof Error ? error.message : 'Не удалось войти через Яндекс',
             variant: 'destructive'
           })
+          callbackProcessedRef.current = false
           router.push('/auth')
         } finally {
           setIsProcessingCallback(false)

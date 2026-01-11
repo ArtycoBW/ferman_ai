@@ -1,8 +1,8 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import type { Lot } from '@/types/api'
+import { ChevronDown, ChevronRight, Loader2, AlertCircle, CheckCircle, Clock } from 'lucide-react'
+import type { Lot, AnalysisStatus } from '@/types/api'
 import type { SectionType } from '@/app/procurement/[id]/page'
 
 interface ProcurementSidebarProps {
@@ -12,6 +12,7 @@ interface ProcurementSidebarProps {
   onSectionChange: (section: SectionType) => void
   onLotChange: (lotIndex: number) => void
   analysisEnabled: boolean
+  analysisStatus?: AnalysisStatus
 }
 
 export function ProcurementSidebar({
@@ -20,11 +21,42 @@ export function ProcurementSidebar({
   activeLot,
   onSectionChange,
   onLotChange,
-  analysisEnabled
+  analysisEnabled,
+  analysisStatus
 }: ProcurementSidebarProps) {
   const isLotSection = activeSection === 'positions' || activeSection === 'requirements'
 
   const safeLots = Array.isArray(lots) ? lots : []
+
+  const getAnalysisIcon = () => {
+    switch (analysisStatus) {
+      case 'completed':
+        return <CheckCircle className="h-4 w-4 text-green-500" />
+      case 'failed':
+        return <AlertCircle className="h-4 w-4 text-red-500" />
+      case 'running':
+        return <Loader2 className="h-4 w-4 animate-spin text-primary" />
+      case 'queued':
+        return <Clock className="h-4 w-4 text-amber-500" />
+      default:
+        return null
+    }
+  }
+
+  const getAnalysisLabel = () => {
+    switch (analysisStatus) {
+      case 'completed':
+        return 'ИИ анализ'
+      case 'failed':
+        return 'ИИ анализ (ошибка)'
+      case 'running':
+        return 'ИИ анализ...'
+      case 'queued':
+        return 'ИИ анализ (в очереди)'
+      default:
+        return 'ИИ анализ'
+    }
+  }
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex-shrink-0">
@@ -127,7 +159,7 @@ export function ProcurementSidebar({
             onClick={() => analysisEnabled && onSectionChange('analysis')}
             disabled={!analysisEnabled}
             className={cn(
-              'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+              'w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2',
               activeSection === 'analysis'
                 ? 'bg-slate-100 text-slate-900 font-medium'
                 : analysisEnabled
@@ -135,7 +167,7 @@ export function ProcurementSidebar({
                   : 'text-slate-400 cursor-not-allowed'
             )}
           >
-            ИИ анализ
+            <span>{getAnalysisLabel()}</span>
           </button>
 
           <button

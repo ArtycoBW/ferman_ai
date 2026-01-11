@@ -115,11 +115,19 @@ export function useDispatchProcurement() {
   })
 }
 
-export function useStatus(purchaseId: string | null, enabled: boolean = true) {
+export function useTaskResult(taskId: string | null, enabled: boolean = true) {
   return useQuery({
-    queryKey: ['status', purchaseId],
-    queryFn: () => apiClient.getStatus(purchaseId!),
-    enabled: !!purchaseId && enabled,
+    queryKey: ['taskResult', taskId],
+    queryFn: () => apiClient.getTaskResult(taskId!),
+    enabled: !!taskId && enabled
+  })
+}
+
+export function useTaskAnalysis(taskId: string | null, enabled: boolean = true) {
+  return useQuery({
+    queryKey: ['taskAnalysis', taskId],
+    queryFn: () => apiClient.getTaskAnalysis(taskId!),
+    enabled: !!taskId && enabled,
     refetchInterval: (query) => {
       const data = query.state.data
       if (data?.analysis_status === 'completed' || data?.analysis_status === 'failed') {
@@ -127,14 +135,6 @@ export function useStatus(purchaseId: string | null, enabled: boolean = true) {
       }
       return 3000
     }
-  })
-}
-
-export function useTaskResult(taskId: string | null, enabled: boolean = true) {
-  return useQuery({
-    queryKey: ['taskResult', taskId],
-    queryFn: () => apiClient.getTaskResult(taskId!),
-    enabled: !!taskId && enabled
   })
 }
 

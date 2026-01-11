@@ -60,8 +60,9 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
     }
   }, [user])
 
-  const usedTokens = user ? (currentTariff?.tariff.token_limit || 0) - (currentTariff?.tokens_balance || 0) : 0
+  const tokensBalance = currentTariff?.tokens_balance || 0
   const totalTokens = currentTariff?.tariff.token_limit || 0
+  const usedTokens = Math.max(0, totalTokens - tokensBalance)
 
   const handleSave = async () => {
     try {
@@ -116,8 +117,8 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                     <span className="text-muted-foreground">Использовано</span>
                     <span>{usedTokens.toLocaleString()} / {totalTokens.toLocaleString()}</span>
                   </div>
-                  <Progress value={usedTokens} max={totalTokens} />
-                  <p className="text-sm text-muted-foreground">Остаток: {(currentTariff?.tokens_balance || 0).toLocaleString()} токенов</p>
+                  <Progress value={usedTokens} max={totalTokens || 1} />
+                  <p className="text-sm text-muted-foreground">Остаток: {tokensBalance.toLocaleString()} токенов</p>
                 </div>
               </div>
 
@@ -147,7 +148,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                             "p-3 text-right font-medium",
                             item.delta < 0 ? "text-red-600" : "text-green-600"
                           )}>
-                            {item.delta > 0 ? '+' : ''}{item.delta.toLocaleString()}
+                            {item.delta > 0 ? '+' : '-'}{Math.abs(item.delta).toLocaleString()}
                           </td>
                         </tr>
                       ))}

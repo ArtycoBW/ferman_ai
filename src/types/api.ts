@@ -427,9 +427,21 @@ export interface TaskResultResponse {
   error: string | null
 }
 
+export interface TaskAnalysisResponse {
+  task_id: string
+  state: string
+  analysis_id: number
+  analysis_status: AnalysisStatus
+  analysis_type: AnalysisType
+  tokens_spent: number
+  result: AnalysisResult | null
+  error: string | null
+}
+
 export interface AnalysisListItem {
   id: number
   purchase_id: string
+  task_id: string
   status: AnalysisStatus
   analysis_type: AnalysisType
   tokens_spent: number

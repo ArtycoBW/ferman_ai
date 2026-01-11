@@ -14,7 +14,18 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
 
   // Get delivery places from all customers
   const customers = lot.customers?.customer || []
-  const deliveryPlaces = customers.flatMap(c => c.deliveryPlaces || [])
+  // Handle both array and object with deliveryPlace key structures
+  const deliveryPlaces = customers.flatMap(c => {
+    const places = c.deliveryPlaces
+    if (!places) return []
+    if (Array.isArray(places)) return places
+    // If it's an object with deliveryPlace array inside
+    if (typeof places === 'object' && 'deliveryPlace' in places) {
+      const inner = (places as { deliveryPlace: unknown }).deliveryPlace
+      return Array.isArray(inner) ? inner : []
+    }
+    return []
+  })
   const purchaseObjects = lot.purchaseObjects?.purchaseObject || []
 
   return (
@@ -45,8 +56,14 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
                   <div className="font-medium text-slate-900">{obj.name}</div>
                 </td>
                 <td className="py-3 px-4">
-                  <div className="font-mono text-xs text-slate-700">{obj.okpd2}</div>
-                  <div className="text-xs text-slate-500 mt-0.5">{obj.okpd2Name}</div>
+                  {obj.okpd2 ? (
+                    <>
+                      <div className="font-mono text-xs text-slate-700">{obj.okpd2}</div>
+                      {obj.okpd2Name && <div className="text-xs text-slate-500 mt-0.5">{obj.okpd2Name}</div>}
+                    </>
+                  ) : (
+                    <span className="text-slate-400">—</span>
+                  )}
                 </td>
                 <td className="py-3 px-4">
                   {obj.ktru ? (
@@ -72,28 +89,35 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {deliveryPlaces.map((place, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <MapPin className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-sm font-medium text-slate-900">
-                      {place.deliveryPlace || '—'}
+              {deliveryPlaces.map((place, idx) => {
+                // Safely extract string values
+                const deliveryPlaceText = typeof place?.deliveryPlace === 'string' ? place.deliveryPlace : null
+                const garAddress = typeof place?.GARAddress === 'string' ? place.GARAddress : null
+                const countryName = typeof place?.countryName === 'string' ? place.countryName : null
+
+                return (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4 text-primary" />
                     </div>
-                    {place.GARAddress && (
-                      <div className="text-xs text-slate-500">
-                        GAR: {place.GARAddress}
+                    <div className="space-y-1">
+                      <div className="text-sm font-medium text-slate-900">
+                        {deliveryPlaceText || '—'}
                       </div>
-                    )}
-                    {place.countryName && (
-                      <div className="text-xs text-slate-500">
-                        {place.countryName}
-                      </div>
-                    )}
+                      {garAddress && (
+                        <div className="text-xs text-slate-500">
+                          GAR: {garAddress}
+                        </div>
+                      )}
+                      {countryName && (
+                        <div className="text-xs text-slate-500">
+                          {countryName}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </CardContent>
         </Card>

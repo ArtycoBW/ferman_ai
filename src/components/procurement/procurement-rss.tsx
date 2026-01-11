@@ -55,7 +55,7 @@ export function ProcurementRSS({ purchaseId }: ProcurementRSSProps) {
 
       parsedItems.push({
         title,
-        description: description.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim(),
+        description: description.replace(/<\/strong>/g, '</strong> ').replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(),
         pubDate,
         purchaseNumber: purchaseNum,
         eventDescription,

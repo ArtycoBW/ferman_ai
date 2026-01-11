@@ -162,10 +162,10 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
                   >
                     <div className="flex-1">
                       <span className="text-sm font-medium text-slate-900">
-                        {req.addRequirements?.[0]?.name || req.name}
+                        {req.addRequirements && req.addRequirements[0]?.name ? req.addRequirements[0].name : req.name}
                       </span>
                       <Badge variant="outline" className="ml-2 text-xs">
-                        {req.addRequirements?.[0]?.code || req.code}
+                        {req.addRequirements && req.addRequirements[0]?.code ? req.addRequirements[0].code : req.code}
                       </Badge>
                     </div>
                     {expandedAddReqs.has(idx) ? (

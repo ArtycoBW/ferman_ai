@@ -21,8 +21,8 @@ import type {
   StartPhoneRegistrationResponse,
   StartRegistrationRequest,
   StartRegistrationResponse,
-  StatusResponse,
   TariffsListResponse,
+  TaskAnalysisResponse,
   TaskResultResponse,
   TokenTransactionsResponse,
   UpdateUserRequest,
@@ -195,12 +195,12 @@ class ApiClient {
     })
   }
 
-  async getStatus(purchaseId: string): Promise<StatusResponse> {
-    return this.request<StatusResponse>(`/api/status/${encodeURIComponent(purchaseId)}`, { method: 'GET' })
-  }
-
   async getTaskResult(taskId: string): Promise<TaskResultResponse> {
     return this.request<TaskResultResponse>(`/api/result/${encodeURIComponent(taskId)}`, { method: 'GET' })
+  }
+
+  async getTaskAnalysis(taskId: string): Promise<TaskAnalysisResponse> {
+    return this.request<TaskAnalysisResponse>(`/api/result/${encodeURIComponent(taskId)}/analysis`, { method: 'GET' })
   }
 
   async listAnalyses(statuses?: AnalysisStatus[]): Promise<AnalysesListResponse> {

@@ -52,7 +52,7 @@ function FavoriteCard({ item, onRemove }: { item: AnalysisListItem; onRemove: ()
       </div>
       
       <div className="flex items-center gap-2">
-        <Link href={`/procurement/${item.purchase_id}`} className="flex-1">
+        <Link href={`/procurement/${item.purchase_id}${item.task_id ? `?task=${item.task_id}` : ''}`} className="flex-1">
           <Button variant="outline" size="sm" className="w-full hover:text-black">
             <ExternalLink className="h-4 w-4 mr-2" />
             Открыть

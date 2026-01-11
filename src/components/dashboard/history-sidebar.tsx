@@ -98,7 +98,7 @@ export function HistorySidebar({ open, onOpenChange }: HistorySidebarProps) {
               {analyses.items.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/procurement/${item.purchase_id}`}
+                  href={`/procurement/${item.purchase_id}${item.task_id ? `?task=${item.task_id}` : ''}`}
                   onClick={() => onOpenChange(false)}
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors group"
                 >
@@ -120,7 +120,7 @@ export function HistorySidebar({ open, onOpenChange }: HistorySidebarProps) {
                       <Star className={cn('h-4 w-4', item.is_favorite && 'fill-current')} />
                     </button>
                     <Link
-                      href={`/procurement/${item.purchase_id}`}
+                      href={`/procurement/${item.purchase_id}${item.task_id ? `?task=${item.task_id}` : ''}`}
                       onClick={(e) => {
                         e.stopPropagation()
                         onOpenChange(false)

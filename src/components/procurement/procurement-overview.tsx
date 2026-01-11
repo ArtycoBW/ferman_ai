@@ -47,6 +47,15 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   const lot = procurement.lots?.lot?.[0]
   const customer = lot?.customers?.customer?.[0]
   const enforcement = customer?.enforcement
+  const nmck = procurement.fullNMCK || 0
+
+  // Вычисляем Amount если его нет, но есть Part
+  const computedContractGuaranteeAmount = enforcement?.contractGuaranteeAmount
+    ?? (enforcement?.contractGuaranteePart && nmck ? nmck * enforcement.contractGuaranteePart / 100 : null)
+  const computedApplicationGuaranteeAmount = enforcement?.applicationGuaranteeAmount
+    ?? (enforcement?.applicationGuaranteePart && nmck ? nmck * enforcement.applicationGuaranteePart / 100 : null)
+  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
+    ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
 
   const hasPreferences = lot?.preferences?.preferense && lot.preferences.preferense.length > 0
   const hasAdditionalRequirements = procurement.computed.hasAdditionalRequirements
@@ -120,13 +129,13 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         <KPICard
           label="Обеспечение заявки"
           fieldName="applicationGuaranteeAmount, applicationGuaranteePart"
-          value={formatCurrency(enforcement?.applicationGuaranteeAmount)}
+          value={formatCurrency(computedApplicationGuaranteeAmount)}
           subValue={enforcement?.applicationGuaranteePart ? `(${enforcement.applicationGuaranteePart}%)` : undefined}
         />
         <KPICard
           label="Обеспечение исполнения"
           fieldName="contractGuaranteeAmount, contractGuaranteePart"
-          value={formatCurrency(enforcement?.contractGuaranteeAmount)}
+          value={formatCurrency(computedContractGuaranteeAmount)}
           subValue={enforcement?.contractGuaranteePart ? `(${enforcement.contractGuaranteePart}%)` : undefined}
         />
       </div>
@@ -134,7 +143,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         <KPICard
           label="Обеспечение гарант. обяз."
           fieldName="contractProvisionWarrantyAmount, contractProvisionWarrantyPart"
-          value={formatCurrency(enforcement?.contractProvisionWarrantyAmount)}
+          value={formatCurrency(computedWarrantyAmount)}
           subValue={enforcement?.contractProvisionWarrantyPart ? `(${enforcement.contractProvisionWarrantyPart}%)` : undefined}
         />
         <KPICard
