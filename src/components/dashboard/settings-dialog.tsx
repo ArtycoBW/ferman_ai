@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Monitor, Smartphone, Laptop, LogOut, Download } from 'lucide-react'
+import { Monitor, Smartphone, Laptop, LogOut, Download, Clock } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components/ui/dialog'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -61,8 +61,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }, [user])
 
   const tokensBalance = currentTariff?.tokens_balance || 0
-  const totalTokens = currentTariff?.tariff.token_limit || 0
-  const usedTokens = Math.max(0, totalTokens - tokensBalance)
+  const tokensLimit = currentTariff?.tariff?.token_limit || 0
+  const tokensUsed = tokensLimit > 0 ? Math.max(tokensLimit - tokensBalance, 0) : 0
+  const progressValue = tokensLimit > 0 ? Math.min(100, (tokensUsed / tokensLimit) * 100) : 0
+  const nf = (n: number) => new Intl.NumberFormat('ru-RU').format(n)
 
   const handleSave = async () => {
     try {
@@ -96,30 +98,36 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6">
               <TabsTrigger value="billing">Биллинг</TabsTrigger>
-              {/* <TabsTrigger value="security">Безопасность</TabsTrigger> */}
               <TabsTrigger value="account">Аккаунт</TabsTrigger>
             </TabsList>
 
             <TabsContent value="billing" className="space-y-6">
               <div className="p-4 rounded-lg bg-secondary/50">
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex items-start justify-between gap-6">
                   <div>
                     <p className="text-sm text-muted-foreground">Текущий тариф</p>
-                    <p className="text-xl font-semibold">{currentTariff?.tariff.name || 'Загрузка...'}</p>
+                    <p className="text-xl font-semibold">{currentTariff?.tariff?.name || 'Загрузка...'}</p>
                   </div>
+
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Лимит токенов</p>
-                    <p className="text-xl font-semibold">{totalTokens.toLocaleString()}</p>
+                    <div className="flex items-center justify-end gap-2 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      <span>Лимит токенов</span>
+                    </div>
+                    <p className="text-xl font-semibold">{tokensLimit > 0 ? nf(tokensLimit) : '—'}</p>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Использовано</span>
-                    <span>{usedTokens.toLocaleString()} / {totalTokens.toLocaleString()}</span>
-                  </div>
-                  <Progress value={usedTokens} max={totalTokens || 1} />
-                  <p className="text-sm text-muted-foreground">Остаток: {tokensBalance.toLocaleString()} токенов</p>
+
+                <div className="mt-4 flex items-center justify-between text-sm">
+                  <p className="text-muted-foreground">Использовано</p>
+                  <p className="font-semibold">{tokensLimit > 0 ? `${nf(tokensUsed)} / ${nf(tokensLimit)}` : '—'}</p>
                 </div>
+
+                <div className="mt-2">
+                  <Progress value={progressValue} className="h-2" />
+                </div>
+
+                <p className="mt-2 text-sm text-muted-foreground">Остаток: {nf(tokensBalance)} токенов</p>
               </div>
 
               <div>
@@ -144,11 +152,11 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                         <tr key={item.id} className="border-t border-border">
                           <td className="p-3">{formatDate(item.created_at)}</td>
                           <td className="p-3">{item.reason}</td>
-                          <td className={cn(
-                            "p-3 text-right font-medium",
-                            item.delta < 0 ? "text-red-600" : "text-green-600"
-                          )}>
-                            {item.delta > 0 ? '+' : '-'}{Math.abs(item.delta).toLocaleString()}
+                          <td
+                            className={cn('p-3 text-right font-medium', item.delta < 0 ? 'text-red-600' : 'text-green-600')}
+                          >
+                            {item.delta > 0 ? '+' : '-'}
+                            {Math.abs(item.delta).toLocaleString()}
                           </td>
                         </tr>
                       ))}
@@ -182,12 +190,14 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                           <td className="p-3">{formatDate(item.created_at)}</td>
                           <td className="p-3 text-center font-medium">{item.tokens_amount.toLocaleString()}</td>
                           <td className="p-3 text-center">
-                            <span className={cn(
-                              "px-2 py-1 rounded text-xs",
-                              item.status === 'completed' && "bg-green-100 text-green-700",
-                              item.status === 'pending' && "bg-yellow-100 text-yellow-700",
-                              item.status === 'failed' && "bg-red-100 text-red-700"
-                            )}>
+                            <span
+                              className={cn(
+                                'px-2 py-1 rounded text-xs',
+                                item.status === 'completed' && 'bg-green-100 text-green-700',
+                                item.status === 'pending' && 'bg-yellow-100 text-yellow-700',
+                                item.status === 'failed' && 'bg-red-100 text-red-700'
+                              )}
+                            >
                               {item.status === 'completed' && 'Завершен'}
                               {item.status === 'pending' && 'В обработке'}
                               {item.status === 'failed' && 'Ошибка'}
@@ -209,55 +219,20 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               </div>
             </TabsContent>
 
-            {/* <TabsContent value="security" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Двухфакторная аутентификация (2FA)</p>
-                  <p className="text-sm text-muted-foreground">Дополнительная защита при входе в аккаунт</p>
-                </div>
-                <Switch checked={twoFaEnabled} onCheckedChange={setTwoFaEnabled} />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium">Активные сессии</h3>
-                  <Button variant="outline" size="sm">Завершить все сессии</Button>
-                </div>
-                <div className="space-y-3">
-                  {mockSessions.map((session) => (
-                    <div key={session.id} className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30">
-                      <div className="text-muted-foreground">{getDeviceIcon(session.device)}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{session.browser} на {session.device}</span>
-                          {session.isCurrent && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-primary/20 text-primary">Текущая</span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          IP: {session.ip} · Вход: {session.lastActive}
-                        </p>
-                      </div>
-                      {!session.isCurrent && (
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                          <LogOut className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </TabsContent> */}
-
             <TabsContent value="account" className="space-y-6">
               <div>
                 <h3 className="font-medium mb-1">Реквизиты для документов</h3>
                 <p className="text-sm text-muted-foreground mb-4">Используется для формирования счетов и отчетных документов</p>
-                
+
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="orgName">Наименование организации</Label>
-                    <Input id="orgName" placeholder="ООО «Название организации»" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
+                    <Input
+                      id="orgName"
+                      placeholder="ООО «Название организации»"
+                      value={orgName}
+                      onChange={(e) => setOrgName(e.target.value)}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -271,11 +246,22 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                   </div>
                   <div>
                     <Label htmlFor="address">Юридический адрес</Label>
-                    <Input id="address" placeholder="г. Москва, ул. Примерная, д. 1" value={address} onChange={(e) => setAddress(e.target.value)} />
+                    <Input
+                      id="address"
+                      placeholder="г. Москва, ул. Примерная, д. 1"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="contactEmail">Контактный email</Label>
-                    <Input id="contactEmail" type="email" placeholder="email@example.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} />
+                    <Input
+                      id="contactEmail"
+                      type="email"
+                      placeholder="email@example.com"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -283,7 +269,9 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
           </Tabs>
         </DialogBody>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Отмена
+          </Button>
           <Button onClick={handleSave} disabled={updateMe.isPending}>
             {updateMe.isPending ? 'Сохранение...' : 'Сохранить'}
           </Button>

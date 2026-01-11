@@ -96,11 +96,11 @@ export function useTokenTransactions(limit: number = 100) {
   })
 }
 
-export function useProcurementBody(purchaseId: string | null) {
+export function useProcurementBody(purchaseId: string | null, enabled: boolean = true) {
   return useQuery({
     queryKey: ['procurementBody', purchaseId],
     queryFn: () => apiClient.getProcurementBody(purchaseId!),
-    enabled: !!purchaseId
+    enabled: !!purchaseId && enabled
   })
 }
 

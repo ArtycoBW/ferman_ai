@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
-import { useProcurementBody, useTaskAnalysis } from '@/hooks/use-api'
+import { useProcurementBody, useTaskResult, useTaskAnalysis } from '@/hooks/use-api'
 import { ProcurementHeader } from '@/components/procurement/procurement-header'
 import { ProcurementSidebar } from '@/components/procurement/procurement-sidebar'
 import { ProcurementOverview } from '@/components/procurement/procurement-overview'
@@ -16,6 +16,7 @@ import { AnalysisStatus } from '@/components/procurement/analysis-status'
 import { ProcurementChronology } from '@/components/procurement/procurement-chronology'
 import { ProcurementRSS } from '@/components/procurement/procurement-rss'
 import { Loader2 } from 'lucide-react'
+import type { ProcurementBody } from '@/types/api'
 
 export type SectionType = 'overview' | 'positions' | 'requirements' | 'documents' | 'contacts' | 'analysis' | 'chronology' | 'rss'
 
@@ -30,8 +31,15 @@ export default function ProcurementPage() {
   const purchaseId = params.id as string
   const taskId = searchParams.get('task')
 
-  const { data: procurement, isLoading: procurementLoading, error: procurementError } = useProcurementBody(purchaseId)
-  const { data: analysisData, isLoading: analysisLoading, error: analysisError } = useTaskAnalysis(taskId, !!taskId)
+  // Если есть taskId - берём body из /api/result/{task_id}, иначе из /api/procurements/{id}/body
+  const { data: taskResultData, isLoading: taskResultLoading, error: taskResultError } = useTaskResult(taskId, !!taskId)
+  const { data: procurementBodyData, isLoading: procurementBodyLoading, error: procurementBodyError } = useProcurementBody(purchaseId, !taskId)
+  const { data: analysisData, isLoading: analysisLoading } = useTaskAnalysis(taskId, !!taskId)
+
+  // Приоритет: taskResult (если есть taskId), иначе procurementBody
+  const procurement = taskId ? (taskResultData as unknown as ProcurementBody) : procurementBodyData
+  const procurementLoading = taskId ? taskResultLoading : procurementBodyLoading
+  const procurementError = taskId ? taskResultError : procurementBodyError
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {

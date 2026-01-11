@@ -55,7 +55,17 @@ export function ProcurementRSS({ purchaseId }: ProcurementRSSProps) {
 
       parsedItems.push({
         title,
-        description: description.replace(/<\/strong>/g, '</strong> ').replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(),
+        description: description
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/<\/strong>/g, '</strong> ')
+          .replace(/<[^>]+>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/\s+/g, ' ')
+          .replace(/Номер закупки:/g, '\nНомер закупки:')
+          .replace(/Наименование объекта закупки:/g, '\nНаименование объекта закупки:')
+          .replace(/Описание события:/g, '\nОписание события:')
+          .replace(/Дата и время события:/g, '\nДата и время события:')
+          .trim(),
         pubDate,
         purchaseNumber: purchaseNum,
         eventDescription,
@@ -196,7 +206,7 @@ export function ProcurementRSS({ purchaseId }: ProcurementRSSProps) {
                     <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
                     {getStatusBadge(item.status, item.severity)}
                   </div>
-                  <p className="text-sm text-slate-600 mb-2">{item.description}</p>
+                  <p className="text-sm text-slate-600 mb-2 whitespace-pre-line">{item.description}</p>
                   <div className="text-xs text-slate-400">
                     {formatDateTime(item.pubDate)}
                   </div>

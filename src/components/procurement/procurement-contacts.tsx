@@ -38,7 +38,7 @@ function ContactRow({ label, value, fieldName, copyable = false }: { label: stri
     <div className="flex items-start py-2">
       <div className="w-32 text-sm text-slate-500 shrink-0">
         {label}
-        <div className="text-xs text-slate-400">({fieldName})</div>
+
       </div>
       <div className="flex-1 text-sm text-slate-900 flex items-center gap-2">
         {value}
@@ -68,7 +68,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
         <div className="p-4">
           <h3 className="font-semibold text-slate-900 mb-4">
             {responsibleOrg.fullName}
-            <span className="text-xs text-slate-400 font-normal ml-2">(responsibleOrgFullName)</span>
           </h3>
           
           <div className="space-y-1">
@@ -83,7 +82,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
                 </div>
                 <div className="flex-1 text-sm text-slate-900">
                   <span className="font-medium">{getContactFullName(responsibleOrg.contactPerson)}</span>
-                  <span className="text-xs text-slate-400 ml-2">(responsibleOrgContactPersonLastName/FirstName/MiddleName)</span>
                 </div>
               </div>
             )}
@@ -94,7 +92,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
                   <a href={`mailto:${responsibleOrg.contactEmail}`} className="text-primary hover:underline">
                     {responsibleOrg.contactEmail}
                   </a>
-                  <span className="text-xs text-slate-400">(responsibleOrgContactEmail)</span>
                   <CopyButton value={responsibleOrg.contactEmail} />
                 </div>
               )}
@@ -103,7 +100,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
                   <a href={`tel:${responsibleOrg.contactPhone}`} className="text-primary hover:underline">
                     {responsibleOrg.contactPhone}
                   </a>
-                  <span className="text-xs text-slate-400">(responsibleOrgContactPhone)</span>
                   <CopyButton value={responsibleOrg.contactPhone} />
                 </div>
               )}
@@ -121,7 +117,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
           <div className="p-4">
             <h3 className="font-semibold text-slate-900 mb-4">
               {customer.fullName}
-              <span className="text-xs text-slate-400 font-normal ml-2">(customerFullName)</span>
             </h3>
             
             <div className="space-y-1">
@@ -138,7 +133,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
                   </div>
                   <div className="flex-1 text-sm text-slate-900">
                     <span className="font-medium">{getContactFullName(customer.contactPerson)}</span>
-                    <span className="text-xs text-slate-400 ml-2">(customerContactPersonFirstName/MiddleName)</span>
                   </div>
                 </div>
               )}
@@ -149,7 +143,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
                     <a href={`mailto:${customer.email}`} className="text-primary hover:underline">
                       {customer.email}
                     </a>
-                    <span className="text-xs text-slate-400">(customerEmail)</span>
                     <CopyButton value={customer.email} />
                   </div>
                 )}
@@ -158,14 +151,12 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
                     <a href={`tel:${customer.phone}`} className="text-primary hover:underline">
                       {customer.phone}
                     </a>
-                    <span className="text-xs text-slate-400">(customerPhone)</span>
                     <CopyButton value={customer.phone} />
                   </div>
                 )}
                 {customer.fax && (
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     Факс: {customer.fax}
-                    <span className="text-xs text-slate-400">(customerFax)</span>
                   </div>
                 )}
               </div>
