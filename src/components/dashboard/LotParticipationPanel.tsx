@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { formatCurrency, formatPercent } from "@/lib/format"
+import { formatCurrencyWithPercent } from "@/lib/format"
 import type { Lot } from "@/types/api"
 
 interface LotParticipationPanelProps {
@@ -36,12 +36,20 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
   }
 
   const requirements = lot.requirements?.requirement || []
-  const preferences = lot.preferences?.preferense || []
+  const preferences = lot.preferenses?.preferense || []
   const customers = lot.customers?.customer || []
   const enforcement = customers[0]?.enforcement
   const additionalRequirements = requirements.filter(
     r => r.addRequirements && r.addRequirements.length > 0
   )
+
+  const nmck = lot.maxPrice || 0
+  const computedApplicationAmount = enforcement?.applicationGuaranteeAmount
+    ?? (enforcement?.applicationGuaranteePart && nmck ? nmck * enforcement.applicationGuaranteePart / 100 : null)
+  const computedContractAmount = enforcement?.contractGuaranteeAmount
+    ?? (enforcement?.contractGuaranteePart && nmck ? nmck * enforcement.contractGuaranteePart / 100 : null)
+  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
+    ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
 
   return (
     <div className="space-y-6">
@@ -62,35 +70,25 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left py-3 px-4 font-medium text-slate-600">Вид обеспечения</th>
                     <th className="text-right py-3 px-4 font-medium text-slate-600">Сумма</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600">Процент</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-slate-100">
                     <td className="py-3 px-4 font-medium text-slate-900">Обеспечение заявки</td>
                     <td className="py-3 px-4 text-right font-medium text-slate-900">
-                      {formatCurrency(enforcement.applicationGuaranteeAmount)}
-                    </td>
-                    <td className="py-3 px-4 text-right text-slate-600">
-                      {formatPercent(enforcement.applicationGuaranteePart)}
+                      {formatCurrencyWithPercent(computedApplicationAmount, enforcement.applicationGuaranteePart)}
                     </td>
                   </tr>
                   <tr className="border-b border-slate-100">
                     <td className="py-3 px-4 font-medium text-slate-900">Обеспечение исполнения контракта</td>
                     <td className="py-3 px-4 text-right font-medium text-slate-900">
-                      {formatCurrency(enforcement.contractGuaranteeAmount)}
-                    </td>
-                    <td className="py-3 px-4 text-right text-slate-600">
-                      {formatPercent(enforcement.contractGuaranteePart)}
+                      {formatCurrencyWithPercent(computedContractAmount, enforcement.contractGuaranteePart)}
                     </td>
                   </tr>
                   <tr>
                     <td className="py-3 px-4 font-medium text-slate-900">Обеспечение гарантийных обязательств</td>
                     <td className="py-3 px-4 text-right font-medium text-slate-900">
-                      {formatCurrency(enforcement.contractProvisionWarrantyAmount)}
-                    </td>
-                    <td className="py-3 px-4 text-right text-slate-600">
-                      {formatPercent(enforcement.contractProvisionWarrantyPart)}
+                      {formatCurrencyWithPercent(computedWarrantyAmount, enforcement.contractProvisionWarrantyPart)}
                     </td>
                   </tr>
                 </tbody>

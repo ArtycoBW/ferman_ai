@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { formatCurrency, formatPercent } from '@/lib/format'
+import { formatCurrencyWithPercent } from '@/lib/format'
 import type { Lot } from '@/types/api'
 
 interface ProcurementRequirementsProps {
@@ -34,10 +34,18 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
   if (!lot) return null
 
   const requirements = lot.requirements?.requirement || []
-  const preferences = lot.preferences?.preferense || []
+  const preferences = lot.preferenses?.preferense || []
   const customers = lot.customers?.customer || []
   const enforcement = customers[0]?.enforcement
   const additionalRequirements = requirements.filter(r => r.addRequirements && r.addRequirements.length > 0)
+
+  const nmck = lot.maxPrice || 0
+  const computedApplicationAmount = enforcement?.applicationGuaranteeAmount
+    ?? (enforcement?.applicationGuaranteePart && nmck ? nmck * enforcement.applicationGuaranteePart / 100 : null)
+  const computedContractAmount = enforcement?.contractGuaranteeAmount
+    ?? (enforcement?.contractGuaranteePart && nmck ? nmck * enforcement.contractGuaranteePart / 100 : null)
+  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
+    ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
 
   return (
     <div className="space-y-6">
@@ -52,35 +60,28 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="text-left py-3 px-4 font-medium text-slate-600"></th>
+                <th className="text-left py-3 px-4 font-medium text-slate-600">Вид обеспечения</th>
                 <th className="text-right py-3 px-4 font-medium text-slate-600">Сумма</th>
-                <th className="text-right py-3 px-4 font-medium text-slate-600 w-24">Процент</th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b border-slate-100">
-                <td className="py-3 px-4">
-                  <span className="text-slate-900">Обеспечение заявки</span>
-                  <span className="text-slate-400 text-xs ml-2">(applicationGuaranteeAmount, applicationGuaranteePart)</span>
+                <td className="py-3 px-4 text-slate-900">Обеспечение заявки</td>
+                <td className="py-3 px-4 text-right font-medium text-slate-900">
+                  {formatCurrencyWithPercent(computedApplicationAmount, enforcement.applicationGuaranteePart)}
                 </td>
-                <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(enforcement.applicationGuaranteeAmount)}</td>
-                <td className="py-3 px-4 text-right text-slate-600">{formatPercent(enforcement.applicationGuaranteePart)}</td>
               </tr>
               <tr className="border-b border-slate-100">
-                <td className="py-3 px-4">
-                  <span className="text-slate-900">Обеспечение исполнения контракта</span>
-                  <span className="text-slate-400 text-xs ml-2">(contractGuaranteeAmount, contractGuaranteePart)</span>
+                <td className="py-3 px-4 text-slate-900">Обеспечение исполнения контракта</td>
+                <td className="py-3 px-4 text-right font-medium text-slate-900">
+                  {formatCurrencyWithPercent(computedContractAmount, enforcement.contractGuaranteePart)}
                 </td>
-                <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(enforcement.contractGuaranteeAmount)}</td>
-                <td className="py-3 px-4 text-right text-slate-600">{formatPercent(enforcement.contractGuaranteePart)}</td>
               </tr>
               <tr>
-                <td className="py-3 px-4">
-                  <span className="text-slate-900">Обеспечение гарантийных обязательств</span>
-                  <span className="text-slate-400 text-xs ml-2">(contractProvisionWarrantyAmount, contractProvisionWarrantyPart)</span>
+                <td className="py-3 px-4 text-slate-900">Обеспечение гарантийных обязательств</td>
+                <td className="py-3 px-4 text-right font-medium text-slate-900">
+                  {formatCurrencyWithPercent(computedWarrantyAmount, enforcement.contractProvisionWarrantyPart)}
                 </td>
-                <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(enforcement.contractProvisionWarrantyAmount)}</td>
-                <td className="py-3 px-4 text-right text-slate-600">{formatPercent(enforcement.contractProvisionWarrantyPart)}</td>
               </tr>
             </tbody>
           </table>
@@ -93,7 +94,6 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
           <div className="px-4 py-3 border-b border-slate-200 flex items-center gap-2">
             <h3 className="font-semibold text-slate-900">Требования к участнику (ЕИС)</h3>
             <span className="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full">{requirements.length}</span>
-            <span className="text-slate-400 text-xs">(requirements[])</span>
           </div>
           <div className="divide-y divide-slate-100">
             {requirements.map((req, idx) => (
@@ -104,11 +104,9 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
                 >
                   <div className="flex-1">
                     <span className="text-sm text-slate-900">{req.name}</span>
-                    <span className="text-slate-400 text-xs ml-2">(requirements[].requirementName)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-500">{req.code}</span>
-                    <span className="text-slate-400 text-xs">(requirements[].requirementCode)</span>
                     {expandedReqs.has(idx) ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
                   </div>
                 </button>
@@ -117,7 +115,7 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
                     {req.content ? (
                       <p className="text-sm text-slate-600 whitespace-pre-wrap">{req.content}</p>
                     ) : (
-                      <p className="text-sm text-slate-400 italic">Не указано (Данных в источнике нет) <span className="text-xs">(requirements[].requirementContent)</span></p>
+                      <p className="text-sm text-slate-400 italic">Не указано</p>
                     )}
                   </div>
                 )}
@@ -133,7 +131,6 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
           <div className="px-4 py-3 border-b border-slate-200 flex items-center gap-2">
             <h3 className="font-semibold text-slate-900">Дополнительные требования / квалификация</h3>
             <span className="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full">{additionalRequirements.length}</span>
-            <span className="text-slate-400 text-xs">(customer_requirements[])</span>
           </div>
           <div className="divide-y divide-slate-100">
             {additionalRequirements.map((req, idx) => (
@@ -144,11 +141,9 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
                 >
                   <div className="flex-1">
                     <span className="text-sm text-slate-900">{req.addRequirements?.[0]?.name || req.name}</span>
-                    <span className="text-slate-400 text-xs ml-2">(customer_requirements[].addRequirementName)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-500">{req.addRequirements?.[0]?.code || req.code}</span>
-                    <span className="text-slate-400 text-xs">(customer_requirements[].addRequirementCode)</span>
                     {expandedAddReqs.has(idx) ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
                   </div>
                 </button>
@@ -156,14 +151,14 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
                   <div className="px-4 pb-4 space-y-3">
                     <div className="ml-4 border-l-2 border-slate-200 pl-4">
                       <div className="text-xs text-slate-500 mb-1">
-                        <span className="text-amber-600">Базовое:</span> {req.code} <span className="text-slate-400">(customer_requirements[].requirementCode)</span> {req.name} <span className="text-slate-400">(customer_requirements[].requirementName)</span>
+                        <span className="text-amber-600">Базовое:</span> {req.code} {req.name}
                       </div>
                       {req.addRequirements?.map((addReq, addIdx) => (
                         <div key={addIdx} className="mt-3 p-3 bg-slate-50 rounded-lg">
                           {addReq.content ? (
                             <p className="text-sm text-slate-700 whitespace-pre-wrap">{addReq.content}</p>
                           ) : (
-                            <p className="text-sm text-slate-400 italic">Не указано <span className="text-xs">(customer_requirements[].addRequirementContent)</span></p>
+                            <p className="text-sm text-slate-400 italic">Не указано</p>
                           )}
                         </div>
                       ))}
@@ -184,14 +179,11 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
           </div>
           <div className="p-4">
             <div className="flex justify-between items-center text-sm py-2 px-3 bg-slate-50 rounded">
-              <span className="text-slate-600">Требование привлечения <span className="text-slate-400 text-xs">(lotSubContractors)</span></span>
+              <span className="text-slate-600">Требование привлечения</span>
               <span className="text-slate-900 font-medium">Да</span>
             </div>
             <p className="text-sm text-slate-600 mt-3">
-              Требование к поставщику (подрядчику, исполнителю), не являющемуся субъектом малого предпринимательства или социально ориентированной некоммерческой организацией, о привлечении к исполнению контракта субподрядчиков, соисполнителей из числа субъектов малого предпринимательства, социально ориентированных некоммерческих организаций в соответствии с ч. 5 ст. 30 Закона № 44 ФЗ <span className="text-slate-400 text-xs">(requirements[].requirementName)</span>
-            </p>
-            <p className="text-sm text-slate-400 italic mt-2">
-              Не указано (Данных в источнике нет) <span className="text-xs">(requirements[].requirementContent)</span>
+              Требование к поставщику (подрядчику, исполнителю), не являющемуся субъектом малого предпринимательства или социально ориентированной некоммерческой организацией, о привлечении к исполнению контракта субподрядчиков, соисполнителей из числа субъектов малого предпринимательства, социально ориентированных некоммерческих организаций в соответствии с ч. 5 ст. 30 Закона № 44 ФЗ
             </p>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ExternalLink, Copy, Check } from 'lucide-react'
-import { formatCurrency, formatDateTime, formatDate, formatBoolean, getDeadlineInfo, formatPercent } from '@/lib/format'
+import { formatCurrency, formatDateTime, formatDate, formatBoolean, getDeadlineInfo, formatCurrencyWithPercent } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/hooks/use-toast'
 import type { ProcurementBody } from '@/types/api'
@@ -11,12 +11,12 @@ interface ProcurementOverviewProps {
   procurement: ProcurementBody
 }
 
-function KPICard({ label, fieldName, value, subValue, colorClass }: { 
+function KPICard({ label, fieldName, value, subValue, colorClass }: {
   label: string
   fieldName: string
   value: string
-  subValue?: string
-  colorClass?: string 
+  subValue?: string | null
+  colorClass?: string
 }) {
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-4">
@@ -57,7 +57,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
     ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
 
-  const hasPreferences = lot?.preferences?.preferense && lot.preferences.preferense.length > 0
+  const hasPreferences = lot?.preferenses?.preferense && lot.preferenses.preferense.length > 0
   const hasAdditionalRequirements = procurement.computed.hasAdditionalRequirements
 
   const handleCopy = async () => {
@@ -119,27 +119,25 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
           label="Дедлайн подачи"
           fieldName="procedureEnd"
           value={formatDateTime(procurement.procedureInfo.summarizingDate)}
+          subValue={deadlineInfo.text}
           colorClass={deadlineInfo.colorClass}
         />
         <KPICard
           label="Обеспечение заявки"
           fieldName="applicationGuaranteeAmount, applicationGuaranteePart"
-          value={formatCurrency(computedApplicationGuaranteeAmount)}
-          subValue={enforcement?.applicationGuaranteePart ? `(${enforcement.applicationGuaranteePart}%)` : undefined}
+          value={formatCurrencyWithPercent(computedApplicationGuaranteeAmount, enforcement?.applicationGuaranteePart)}
         />
         <KPICard
           label="Обеспечение исполнения"
           fieldName="contractGuaranteeAmount, contractGuaranteePart"
-          value={formatCurrency(computedContractGuaranteeAmount)}
-          subValue={enforcement?.contractGuaranteePart ? `(${enforcement.contractGuaranteePart}%)` : undefined}
+          value={formatCurrencyWithPercent(computedContractGuaranteeAmount, enforcement?.contractGuaranteePart)}
         />
       </div>
       <div className="grid grid-cols-4 gap-4">
         <KPICard
           label="Обеспечение гарант. обяз."
           fieldName="contractProvisionWarrantyAmount, contractProvisionWarrantyPart"
-          value={formatCurrency(computedWarrantyAmount)}
-          subValue={enforcement?.contractProvisionWarrantyPart ? `(${enforcement.contractProvisionWarrantyPart}%)` : undefined}
+          value={formatCurrencyWithPercent(computedWarrantyAmount, enforcement?.contractProvisionWarrantyPart)}
         />
         <KPICard
           label="Документы"
@@ -229,7 +227,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
               <InfoRow 
                 label="Преференции" 
                 fieldName="benefits[]" 
-                value={hasPreferences ? 'Не указаны' : 'Не указаны'} 
+                value={hasPreferences ? 'Указаны' : 'Не указаны'} 
               />
               <InfoRow 
                 label="Количество по позициям" 

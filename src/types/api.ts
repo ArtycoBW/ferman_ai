@@ -299,7 +299,7 @@ export interface Lot {
   purchaseObjects: PurchaseObjects
   customers: Customers
   requirements: Requirements
-  preferences: Preferences
+  preferenses: Preferences
 }
 
 export interface Attachment {

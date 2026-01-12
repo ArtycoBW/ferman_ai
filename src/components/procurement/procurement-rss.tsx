@@ -83,41 +83,18 @@ export function ProcurementRSS({ purchaseId }: ProcurementRSSProps) {
     setIsLoading(true)
     setError(null)
     try {
-      // Due to CORS, we'll use mock data that matches the real RSS structure
-      // In production, this should go through a backend proxy
-      const mockXML = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-<channel>
-<title>Портал госзакупок</title>
-<link>/epz/main/public/</link>
-<description>Официальный сайт Российской Федерации для размещения информации о размещении заказов</description>
-<item>
-<title>Извещение № ${purchaseId}</title>
-<description><strong>Номер закупки: </strong>${purchaseId}<br/><strong>Наименование объекта закупки: </strong>Оказание услуг специализированной организацией<br/><strong>Описание события: </strong>Размещен протокол № ${purchaseId}-01. Извещение о закупке. Способ закупки: Закупка у единственного поставщика.<br/><strong>Дата и время события: </strong>09.01.2026<br/><br/></description>
-<pubDate>Thu, 09 Jan 2026 10:00:00 GMT</pubDate>
-</item>
-<item>
-<title>Извещение № ${purchaseId}</title>
-<description><strong>Номер закупки: </strong>${purchaseId}<br/><strong>Наименование объекта закупки: </strong>Оказание услуг специализированной организацией<br/><strong>Описание события: </strong>Закупка переведена на этап «Закупка завершена» с этапа «Работа комиссии»<br/><strong>Дата и время события: </strong>09.01.2026<br/><br/></description>
-<pubDate>Thu, 09 Jan 2026 09:30:00 GMT</pubDate>
-</item>
-<item>
-<title>Извещение № ${purchaseId}</title>
-<description><strong>Номер закупки: </strong>${purchaseId}<br/><strong>Наименование объекта закупки: </strong>Оказание услуг специализированной организацией<br/><strong>Описание события: </strong>Закупка переведена на этап «Работа комиссии» с этапа «Формирование извещения»<br/><strong>Дата и время события: </strong>08.01.2026<br/><br/></description>
-<pubDate>Wed, 08 Jan 2026 14:20:00 GMT</pubDate>
-</item>
-<item>
-<title>Извещение № ${purchaseId}</title>
-<description><strong>Номер закупки: </strong>${purchaseId}<br/><strong>Наименование объекта закупки: </strong>Оказание услуг специализированной организацией<br/><strong>Описание события: </strong>Размещено извещение о закупке (приглашение) № ${purchaseId}. Способ закупки: Закупка у единственного поставщика.<br/><strong>Дата и время события: </strong>08.01.2026<br/><br/></description>
-<pubDate>Wed, 08 Jan 2026 12:00:00 GMT</pubDate>
-</item>
-</channel>
-</rss>`
+      const response = await fetch(`https://zakupki.gov.ru/epz/order/notice/rss?regNumber=${encodeURIComponent(purchaseId)}`)
 
-      const parsedItems = parseRSSXML(mockXML, purchaseId)
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Ошибка: ${response.status}`)
+      }
+
+      const xmlText = await response.text()
+      const parsedItems = parseRSSXML(xmlText, purchaseId)
       setItems(parsedItems)
     } catch (err) {
-      setError('Не удалось загрузить RSS ленту')
+      setError(err instanceof Error ? err.message : 'Не удалось загрузить RSS ленту')
     } finally {
       setIsLoading(false)
     }

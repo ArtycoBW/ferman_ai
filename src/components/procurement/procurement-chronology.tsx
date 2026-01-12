@@ -111,12 +111,12 @@ export function ProcurementChronology({ chronology }: ProcurementChronologyProps
       <h2 className="text-lg font-semibold">Хронология</h2>
 
       <div className="relative">
-        <div className="absolute left-[6px] top-3 bottom-3 w-[2px] bg-border" />
+        <div className="absolute left-[5px] top-1 bottom-0 w-[2px] bg-border" />
 
         <div className="space-y-3">
           {normalized.map((event) => (
             <div key={event.key} className="relative flex items-start gap-4">
-              <div className="relative z-10 mt-4 h-3 w-3 shrink-0 rounded-full bg-primary" />
+              <div className="relative z-10 mt-7 h-3 w-3 shrink-0 rounded-full bg-primary" />
 
               <div className="flex-1 rounded-xl border border-border bg-card px-4 py-3 shadow-sm">
                 <div className="text-sm text-muted-foreground">

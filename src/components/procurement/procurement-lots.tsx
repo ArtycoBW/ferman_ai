@@ -39,17 +39,17 @@ function LotPositionsTable({ lot }: { lot: Lot }) {
                 <div className="font-medium">{obj.name}</div>
               </td>
               <td className="py-2 px-3">
-                <div className="font-mono text-xs">{obj.okpd2}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{obj.okpd2Name}</div>
+                <div className="font-mono text-xs">{obj.OKPD2 || '—'}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{obj.OKPD2NAME}</div>
               </td>
               <td className="py-2 px-3">
-                {obj.ktru ? (
-                  <div className="font-mono text-xs">{obj.ktru}</div>
+                {obj.KTRU ? (
+                  <div className="font-mono text-xs">{obj.KTRU}</div>
                 ) : (
                   <span className="text-muted-foreground">—</span>
                 )}
               </td>
-              <td className="py-2 px-3">{obj.okeiName || '—'}</td>
+              <td className="py-2 px-3">{obj.OKEINAME || '—'}</td>
               <td className="py-2 px-3 text-right">{obj.quantity != null ? obj.quantity : '—'}</td>
               <td className="py-2 px-3 text-right font-medium">{formatCurrency(obj.price)}</td>
               <td className="py-2 px-3 text-right font-medium">{formatCurrency(obj.sum)}</td>
@@ -79,7 +79,7 @@ function LotRequirements({ lot }: { lot: Lot }) {
   const customers = lot.customers?.customer || []
   const enforcement = customers[0]?.enforcement
   const requirements = lot.requirements?.requirement || []
-  const preferences = lot.preferences?.preferense || []
+  const preferences = lot.preferenses?.preferense || []
 
   return (
     <div className="space-y-6">
