@@ -12,12 +12,16 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronUp,
-  Filter
+  Filter,
+  Download,
+  Loader2
 } from 'lucide-react'
+import { apiClient } from '@/lib/api'
 import type { AnalysisResult, RuleResult, RuleStatus, RiskType, Severity } from '@/types/api'
 
 interface AnalysisResultsProps {
   result: AnalysisResult
+  taskId?: string
 }
 
 type FilterType = 'all' | 'violations' | 'risks' | 'ok'
@@ -269,11 +273,53 @@ function RulesTab({ result }: { result: AnalysisResult }) {
   )
 }
 
-export function AnalysisResults({ result }: AnalysisResultsProps) {
+export function AnalysisResults({ result, taskId }: AnalysisResultsProps) {
   const [activeTab, setActiveTab] = useState('summary')
+  const [isDownloading, setIsDownloading] = useState(false)
+
+  const handleDownloadPdf = async () => {
+    if (!taskId) return
+
+    setIsDownloading(true)
+    try {
+      const blob = await apiClient.downloadAnalysisSummaryPdf(taskId)
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `analysis-summary-${taskId}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Ошибка скачивания PDF:', error)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Результаты анализа</h2>
+        {taskId && (
+          <Button
+            onClick={handleDownloadPdf}
+            disabled={isDownloading}
+            variant="outline"
+            size="sm"
+            className='hover:text-black'
+          >
+            {isDownloading ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 mr-2" />
+            )}
+            Скачать PDF
+          </Button>
+        )}
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="summary">Кратко</TabsTrigger>

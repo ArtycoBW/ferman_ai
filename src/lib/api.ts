@@ -218,6 +218,24 @@ class ApiClient {
   async removeFavorite(analysisId: number): Promise<void> {
     return this.request<void>(`/api/favorites/${analysisId}`, { method: 'DELETE' })
   }
+
+  async downloadAnalysisSummaryPdf(taskId: string): Promise<Blob> {
+    const url = `${this.baseUrl}/api/result/${encodeURIComponent(taskId)}/analysis/summary`
+    const token = this.getToken()
+
+    const headers: HeadersInit = {}
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const response = await fetch(url, { method: 'GET', headers })
+
+    if (!response.ok) {
+      throw new Error('Не удалось скачать отчёт')
+    }
+
+    return response.blob()
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL)

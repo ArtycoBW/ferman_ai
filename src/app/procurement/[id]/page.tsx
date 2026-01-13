@@ -135,7 +135,7 @@ export default function ProcurementPage() {
           )
         }
         if (analysisCompleted && analysisData?.result) {
-          return <AnalysisResults result={analysisData.result} />
+          return <AnalysisResults result={analysisData.result} taskId={taskId || undefined} />
         }
         return <div className="text-muted-foreground">Анализ не завершён</div>
       case 'chronology':
