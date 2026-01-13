@@ -200,9 +200,9 @@ export interface PurchaseObject {
   number: number
   name: string
   OKPD2: string
-  OKPD2NAME: string
+  OKPD2Name: string
   KTRU: string | null
-  OKEINAME: string | null
+  OKEIName: string | null
   quantity: number | null
   price: number | null
   sum: number | null

@@ -59,7 +59,7 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
                   {obj.OKPD2 ? (
                     <>
                       <div className="font-mono text-xs text-slate-700">{obj.OKPD2}</div>
-                      {obj.OKPD2NAME && <div className="text-xs text-slate-500 mt-0.5">{obj.OKPD2NAME}</div>}
+                      {obj.OKPD2Name && <div className="text-xs text-slate-500 mt-0.5">{obj.OKPD2Name}</div>}
                     </>
                   ) : (
                     <span className="text-slate-400">—</span>
@@ -72,7 +72,7 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
                     <span className="text-slate-400">—</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-slate-600">{obj.OKEINAME || '—'}</td>
+                <td className="py-3 px-4 text-slate-600">{obj.OKEIName || '—'}</td>
                 <td className="py-3 px-4 text-right text-slate-600">{obj.quantity != null ? obj.quantity : '—'}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(obj.price)}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(obj.sum)}</td>

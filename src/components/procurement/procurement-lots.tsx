@@ -40,7 +40,7 @@ function LotPositionsTable({ lot }: { lot: Lot }) {
               </td>
               <td className="py-2 px-3">
                 <div className="font-mono text-xs">{obj.OKPD2 || '—'}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{obj.OKPD2NAME}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{obj.OKPD2Name}</div>
               </td>
               <td className="py-2 px-3">
                 {obj.KTRU ? (
@@ -49,7 +49,7 @@ function LotPositionsTable({ lot }: { lot: Lot }) {
                   <span className="text-muted-foreground">—</span>
                 )}
               </td>
-              <td className="py-2 px-3">{obj.OKEINAME || '—'}</td>
+              <td className="py-2 px-3">{obj.OKEIName || '—'}</td>
               <td className="py-2 px-3 text-right">{obj.quantity != null ? obj.quantity : '—'}</td>
               <td className="py-2 px-3 text-right font-medium">{formatCurrency(obj.price)}</td>
               <td className="py-2 px-3 text-right font-medium">{formatCurrency(obj.sum)}</td>

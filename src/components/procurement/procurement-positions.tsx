@@ -40,7 +40,7 @@ export function ProcurementPositions({ lot }: ProcurementPositionsProps) {
                 </td>
                 <td className="py-3 px-4">
                   <div className="font-mono text-xs text-slate-700">{obj.OKPD2 || '—'}</div>
-                  <div className="text-xs text-slate-500 mt-0.5 max-w-xs truncate">{obj.OKPD2NAME}</div>
+                  <div className="text-xs text-slate-500 mt-0.5 max-w-xs truncate">{obj.OKPD2Name}</div>
                 </td>
                 <td className="py-3 px-4">
                   {obj.KTRU ? (
@@ -49,7 +49,7 @@ export function ProcurementPositions({ lot }: ProcurementPositionsProps) {
                     <span className="text-slate-400">—</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-slate-600">{obj.OKEINAME || '—'}</td>
+                <td className="py-3 px-4 text-slate-600">{obj.OKEIName || '—'}</td>
                 <td className="py-3 px-4 text-right text-slate-600">{obj.quantity ?? '—'}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(obj.price)}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">{formatCurrency(obj.sum)}</td>
