@@ -30,16 +30,19 @@ export default function ProcurementPage() {
 
   const purchaseId = params.id as string
   const taskId = searchParams.get('task')
+  const fromHome = searchParams.get('from') === 'home'
 
-  // Если есть taskId - берём body из /api/result/{task_id}, иначе из /api/procurements/{id}/body
-  const { data: taskResultData, isLoading: taskResultLoading, error: taskResultError } = useTaskResult(taskId, !!taskId)
-  const { data: procurementBodyData, isLoading: procurementBodyLoading, error: procurementBodyError } = useProcurementBody(purchaseId, !taskId)
+  // Если переход из истории (есть taskId, но НЕТ from=home) - берём body из /api/result/{task_id}
+  // Если переход с главной (from=home) или нет taskId - берём body из /api/procurements/{id}/body
+  const useTaskResultForBody = !!taskId && !fromHome
+  const { data: taskResultData, isLoading: taskResultLoading, error: taskResultError } = useTaskResult(taskId, useTaskResultForBody)
+  const { data: procurementBodyData, isLoading: procurementBodyLoading, error: procurementBodyError } = useProcurementBody(purchaseId, !useTaskResultForBody)
   const { data: analysisData, isLoading: analysisLoading } = useTaskAnalysis(taskId, !!taskId)
 
-  // Приоритет: taskResult (если есть taskId), иначе procurementBody
-  const procurement = taskId ? (taskResultData as unknown as ProcurementBody) : procurementBodyData
-  const procurementLoading = taskId ? taskResultLoading : procurementBodyLoading
-  const procurementError = taskId ? taskResultError : procurementBodyError
+  // Приоритет: taskResult (если переход из истории), иначе procurementBody
+  const procurement = useTaskResultForBody ? (taskResultData as unknown as ProcurementBody) : procurementBodyData
+  const procurementLoading = useTaskResultForBody ? taskResultLoading : procurementBodyLoading
+  const procurementError = useTaskResultForBody ? taskResultError : procurementBodyError
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {

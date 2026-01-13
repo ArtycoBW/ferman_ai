@@ -36,22 +36,24 @@ function parseAnyDateToTs(input?: string): number | null {
 
   const s = input.trim()
 
+  const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
+  if (m) {
+    const dd = Number(m[1])
+    const mm = Number(m[2])
+    const yyyy = Number(m[3])
+    const hh = m[4] ? Number(m[4]) : 0
+    const mi = m[5] ? Number(m[5]) : 0
+    const ss = m[6] ? Number(m[6]) : 0
+
+    const d = new Date(yyyy, mm - 1, dd, hh, mi, ss, 0)
+    const ts = d.getTime()
+    return Number.isNaN(ts) ? null : ts
+  }
+
   const isoTs = Date.parse(s)
   if (!Number.isNaN(isoTs)) return isoTs
 
-  const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
-  if (!m) return null
-
-  const dd = Number(m[1])
-  const mm = Number(m[2])
-  const yyyy = Number(m[3])
-  const hh = m[4] ? Number(m[4]) : 0
-  const mi = m[5] ? Number(m[5]) : 0
-  const ss = m[6] ? Number(m[6]) : 0
-
-  const d = new Date(yyyy, mm - 1, dd, hh, mi, ss, 0)
-  const ts = d.getTime()
-  return Number.isNaN(ts) ? null : ts
+  return null
 }
 
 function formatRuDateTime(input?: string): string {

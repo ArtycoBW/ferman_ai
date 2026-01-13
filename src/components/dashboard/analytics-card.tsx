@@ -26,7 +26,7 @@ export function AnalyticsCard() {
         analysis_type: analysisType,
       })
       toast({ title: 'Аудит запущен' })
-      router.push(`/procurement/${response.purchase_id}?task=${response.task_id}`)
+      router.push(`/procurement/${response.purchase_id}?task=${response.task_id}&from=home`)
     } catch (error) {
       toast({
         title: 'Ошибка',

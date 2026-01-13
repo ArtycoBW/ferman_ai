@@ -67,17 +67,29 @@ export function formatCurrencyWithPercent(
   return '—'
 }
 
-function parseAnyDateToTs(input?: string): number | null {
+export function parseAnyDateToTs(input?: string): number | null {
   if (!input) return null
+
   const s = input.trim()
-  const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
-  if (m) {
-    const d = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4] || 0), Number(m[5] || 0), Number(m[6] || 0))
-    const ts = d.getTime()
-    return Number.isNaN(ts) ? null : ts
-  }
+
+  // First try ISO format (faster and more common)
   const isoTs = Date.parse(s)
-  return Number.isNaN(isoTs) ? null : isoTs
+  if (!Number.isNaN(isoTs)) return isoTs
+
+  // Then try Russian format DD.MM.YYYY HH:mm:ss
+  const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
+  if (!m) return null
+
+  const dd = Number(m[1])
+  const mm = Number(m[2])
+  const yyyy = Number(m[3])
+  const hh = m[4] ? Number(m[4]) : 0
+  const mi = m[5] ? Number(m[5]) : 0
+  const ss = m[6] ? Number(m[6]) : 0
+
+  const d = new Date(yyyy, mm - 1, dd, hh, mi, ss, 0)
+  const ts = d.getTime()
+  return Number.isNaN(ts) ? null : ts
 }
 
 export function getDeadlineInfo(dateStr: string | null | undefined, cancelled: boolean) {
