@@ -21,7 +21,6 @@ function HomePageContent() {
     setIsMounted(true)
   }, [])
 
-  // Handle Yandex OAuth callback
   useEffect(() => {
     const code = searchParams.get('code')
     const state = searchParams.get('cid')
@@ -39,7 +38,6 @@ function HomePageContent() {
             description: 'Вы успешно вошли через Яндекс ID',
             variant: 'success'
           })
-          // Clean URL from OAuth parameters
           router.replace('/')
         } catch (error) {
           toast({

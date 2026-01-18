@@ -32,14 +32,11 @@ export default function ProcurementPage() {
   const taskId = searchParams.get('task')
   const fromHome = searchParams.get('from') === 'home'
 
-  // Если переход из истории (есть taskId, но НЕТ from=home) - берём body из /api/result/{task_id}
-  // Если переход с главной (from=home) или нет taskId - берём body из /api/procurements/{id}/body
   const useTaskResultForBody = !!taskId && !fromHome
   const { data: taskResultData, isLoading: taskResultLoading, error: taskResultError } = useTaskResult(taskId, useTaskResultForBody)
   const { data: procurementBodyData, isLoading: procurementBodyLoading, error: procurementBodyError } = useProcurementBody(purchaseId, !useTaskResultForBody)
   const { data: analysisData, isLoading: analysisLoading } = useTaskAnalysis(taskId, !!taskId)
 
-  // Приоритет: taskResult (если переход из истории), иначе procurementBody
   const procurement = useTaskResultForBody ? (taskResultData as unknown as ProcurementBody) : procurementBodyData
   const procurementLoading = useTaskResultForBody ? taskResultLoading : procurementBodyLoading
   const procurementError = useTaskResultForBody ? taskResultError : procurementBodyError

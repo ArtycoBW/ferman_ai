@@ -14,18 +14,12 @@ interface HistorySidebarProps {
 }
 
 function getStatusIcon(item: AnalysisListItem) {
-  // Determine icon based on status and result
-  // green checkmark = ok/completed without issues
-  // yellow/amber triangle = risk/warning  
-  // red circle = violation/failed
   
   if (item.status === 'failed') {
     return <XCircle className="h-5 w-5 text-red-500 fill-red-500" />
   }
   
   if (item.status === 'completed') {
-    // Check if there are violations or risks in result
-    // For now, mock based on some pattern
     const hasViolation = item.purchase_id.endsWith('756') || item.purchase_id.endsWith('043')
     const hasRisk = item.purchase_id.endsWith('001') || item.purchase_id.endsWith('521') || item.purchase_id.endsWith('287')
     

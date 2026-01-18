@@ -43,7 +43,7 @@ function InfoRow({ label, fieldName, value }: { label: string; fieldName: string
 export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   const [copied, setCopied] = useState(false)
 
-  const deadlineInfo = getDeadlineInfo(procurement.procedureInfo.summarizingDate, procurement.cancelled)
+  const deadlineInfo = getDeadlineInfo(procurement.procedureInfo?.summarizingDate, procurement.cancelled)
   const lot = procurement.lots?.lot?.[0]
   const customer = lot?.customers?.customer?.[0]
   const enforcement = customer?.enforcement
@@ -118,7 +118,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         <KPICard
           label="Дедлайн подачи"
           fieldName="procedureEnd"
-          value={formatDateTime(procurement.procedureInfo.summarizingDate)}
+          value={formatDateTime(procurement.procedureInfo?.summarizingDate)}
           subValue={deadlineInfo.text}
           colorClass={deadlineInfo.colorClass}
         />
@@ -169,27 +169,27 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
               <InfoRow 
                 label="Начало подачи" 
                 fieldName="procedureStart" 
-                value={formatDateTime(procurement.procedureInfo.start)} 
+                value={formatDateTime(procurement.procedureInfo?.start)} 
               />
-              {procurement.procedureInfo.secondPartsDate && (
+              {procurement.procedureInfo?.secondPartsDate && (
                 <InfoRow 
                   label="Рассмотрение 2-х частей" 
                   fieldName="procedureSecondPartsDate" 
-                  value={formatDate(procurement.procedureInfo.secondPartsDate)} 
+                  value={formatDate(procurement.procedureInfo?.secondPartsDate)} 
                 />
               )}
-              {procurement.procedureInfo.summarizingDate && (
+              {procurement.procedureInfo?.summarizingDate && (
                 <InfoRow 
                   label="Подведение итогов" 
                   fieldName="procedureSummarizingDate" 
-                  value={formatDate(procurement.procedureInfo.summarizingDate)} 
+                  value={formatDate(procurement.procedureInfo?.summarizingDate)} 
                 />
               )}
-              {(procurement.procedureInfo.deliveryTermStart || procurement.procedureInfo.deliveryTermEnd) && (
+              {(procurement.procedureInfo?.deliveryTermStart || procurement.procedureInfo?.deliveryTermEnd) && (
                 <InfoRow
                   label="Период выполнения"
                   fieldName="deliveryTermStart, deliveryTermEnd"
-                  value={`${formatDate(procurement.procedureInfo.deliveryTermStart)} — ${formatDate(procurement.procedureInfo.deliveryTermEnd)}`}
+                  value={`${formatDate(procurement.procedureInfo?.deliveryTermStart)} — ${formatDate(procurement.procedureInfo?.deliveryTermEnd)}`}
                 />
               )}
             </div>
