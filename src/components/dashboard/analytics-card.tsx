@@ -45,7 +45,7 @@ export function AnalyticsCard() {
         <Input
           type="text"
           value={purchaseId}
-          onChange={(e) => setPurchaseId(e.target.value)}
+          onChange={(e) => setPurchaseId(e.target.value.replace(/\D/g, ''))}
           placeholder="Например: 0373100000125000001"
           disabled={dispatchProcurement.isPending}
           className="font-mono bg-slate-50 border-slate-200"
