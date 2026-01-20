@@ -49,13 +49,9 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   const enforcement = customer?.enforcement
   const nmck = procurement.fullNMCK || 0
 
-  // Вычисляем Amount если его нет, но есть Part
-  const computedContractGuaranteeAmount = enforcement?.contractGuaranteeAmount
-    ?? (enforcement?.contractGuaranteePart && nmck ? nmck * enforcement.contractGuaranteePart / 100 : null)
-  const computedApplicationGuaranteeAmount = enforcement?.applicationGuaranteeAmount
-    ?? (enforcement?.applicationGuaranteePart && nmck ? nmck * enforcement.applicationGuaranteePart / 100 : null)
-  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
-    ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
+  const computedContractGuaranteeAmount = enforcement?.contractGuaranteeAmount ?? null
+  const computedApplicationGuaranteeAmount = enforcement?.applicationGuaranteeAmount ?? null
+  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount ?? null
 
   const hasPreferences = lot?.preferenses?.preferense && lot.preferenses.preferense.length > 0
   const hasAdditionalRequirements = procurement.computed.hasAdditionalRequirements
@@ -69,7 +65,6 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
 
   return (
     <div className="space-y-6">
-      {/* Procurement Info Block */}
       <div className="bg-white rounded-lg border border-slate-200 p-4">
         <div className="bg-amber-400 text-amber-900 px-3 py-2 rounded-md text-sm font-medium mb-3">
           {procurement.placingWay}
@@ -108,7 +103,6 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         </Button>
       </div>
 
-      {/* KPI Cards - 2 rows of 4 */}
       <div className="grid grid-cols-4 gap-4">
         <KPICard
           label="НМЦК"
@@ -156,13 +150,11 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         />
       </div>
 
-      {/* Что важно */}
       <div className="bg-white rounded-lg border border-slate-200">
         <div className="px-4 py-3 border-b border-slate-200">
           <h3 className="font-semibold text-slate-900">Что важно</h3>
         </div>
         <div className="grid md:grid-cols-2 divide-x divide-slate-100">
-          {/* Сроки */}
           <div className="p-4">
             <h4 className="text-sm font-medium text-slate-500 mb-3">Сроки</h4>
             <div>
@@ -195,7 +187,6 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
             </div>
           </div>
 
-          {/* Участие */}
           <div className="p-4">
             <h4 className="text-sm font-medium text-slate-500 mb-3">Участие</h4>
             <div>

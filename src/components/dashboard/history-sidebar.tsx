@@ -32,7 +32,6 @@ function getStatusIcon(item: AnalysisListItem) {
     return <CheckCircle className="h-5 w-5 text-green-500" />
   }
   
-  // Running or queued - show amber
   return <AlertTriangle className="h-5 w-5 text-amber-500" />
 }
 

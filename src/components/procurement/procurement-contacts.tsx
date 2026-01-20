@@ -60,7 +60,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">Контакты</h2>
 
-      {/* Организация размещения */}
       <div className="bg-white rounded-lg border border-slate-200">
         <div className="px-4 py-3 border-b border-slate-200">
           <div className="text-sm text-slate-500">Организация размещения</div>
@@ -108,7 +107,6 @@ export function ProcurementContacts({ responsibleOrg, lots }: ProcurementContact
         </div>
       </div>
 
-      {/* Заказчики */}
       {uniqueCustomers.map((customer, idx) => (
         <div key={idx} className="bg-white rounded-lg border border-slate-200">
           <div className="px-4 py-3 border-b border-slate-200">

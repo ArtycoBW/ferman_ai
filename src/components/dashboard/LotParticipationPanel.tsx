@@ -43,13 +43,9 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
     r => r.addRequirements && r.addRequirements.length > 0
   )
 
-  const nmck = lot.maxPrice || 0
-  const computedApplicationAmount = enforcement?.applicationGuaranteeAmount
-    ?? (enforcement?.applicationGuaranteePart && nmck ? nmck * enforcement.applicationGuaranteePart / 100 : null)
-  const computedContractAmount = enforcement?.contractGuaranteeAmount
-    ?? (enforcement?.contractGuaranteePart && nmck ? nmck * enforcement.contractGuaranteePart / 100 : null)
-  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
-    ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
+  const computedApplicationAmount = enforcement?.applicationGuaranteeAmount ?? null
+  const computedContractAmount = enforcement?.contractGuaranteeAmount ?? null
+  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount ?? null
 
   return (
     <div className="space-y-6">
@@ -57,7 +53,6 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
         Условия участия — Лот {lot.lotNumber}
       </h2>
 
-      {/* Обеспечения */}
       {enforcement && (
         <Card>
           <CardHeader className="pb-2">
@@ -98,7 +93,6 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
         </Card>
       )}
 
-      {/* Требования к участнику (ЕИС) */}
       {requirements.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
@@ -141,7 +135,6 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
         </Card>
       )}
 
-      {/* Дополнительные требования / квалификация */}
       {additionalRequirements.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
@@ -196,7 +189,6 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
         </Card>
       )}
 
-      {/* Субподрядчики СМП/СОНКО */}
       {lot.lotSubContractors && (
         <Card className="border-primary/20">
           <CardHeader className="pb-2">
@@ -218,7 +210,6 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
         </Card>
       )}
 
-      {/* Преференции / ограничения */}
       {preferences.length > 0 && (
         <Card>
           <CardHeader className="pb-2">

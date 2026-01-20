@@ -388,7 +388,7 @@ export interface StatusResponse {
 }
 
 export type RuleStatus = 'ok' | 'triggered'
-export type RiskType = 'violation' | 'risk' | 'info'
+export type RiskType = 'violation' | 'risk' | 'info' | 'inconsistency'
 export type Severity = 'high' | 'medium' | 'low'
 
 export interface RuleResult {

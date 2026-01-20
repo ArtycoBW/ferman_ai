@@ -84,7 +84,6 @@ export function AnalysisStatus({ status, isLoading, error }: AnalysisStatusProps
     )
   }
 
-  // Running status
   return (
     <Card className="border-primary/20 bg-primary/5">
       <CardContent className="py-4">

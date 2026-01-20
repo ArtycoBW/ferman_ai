@@ -72,11 +72,9 @@ export function parseAnyDateToTs(input?: string): number | null {
 
   const s = input.trim()
 
-  // First try ISO format (faster and more common)
   const isoTs = Date.parse(s)
   if (!Number.isNaN(isoTs)) return isoTs
 
-  // Then try Russian format DD.MM.YYYY HH:mm:ss
   const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
   if (!m) return null
 

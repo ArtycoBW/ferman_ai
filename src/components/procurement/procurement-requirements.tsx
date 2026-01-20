@@ -39,19 +39,14 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
   const enforcement = customers[0]?.enforcement
   const additionalRequirements = requirements.filter(r => r.addRequirements && r.addRequirements.length > 0)
 
-  const nmck = lot.maxPrice || 0
-  const computedApplicationAmount = enforcement?.applicationGuaranteeAmount
-    ?? (enforcement?.applicationGuaranteePart && nmck ? nmck * enforcement.applicationGuaranteePart / 100 : null)
-  const computedContractAmount = enforcement?.contractGuaranteeAmount
-    ?? (enforcement?.contractGuaranteePart && nmck ? nmck * enforcement.contractGuaranteePart / 100 : null)
-  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount
-    ?? (enforcement?.contractProvisionWarrantyPart && nmck ? nmck * enforcement.contractProvisionWarrantyPart / 100 : null)
+  const computedApplicationAmount = enforcement?.applicationGuaranteeAmount ?? null
+  const computedContractAmount = enforcement?.contractGuaranteeAmount ?? null
+  const computedWarrantyAmount = enforcement?.contractProvisionWarrantyAmount ?? null
 
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">Условия участия — Лот {lot.lotNumber}</h2>
 
-      {/* Обеспечения */}
       {enforcement && (
         <div className="bg-white rounded-lg border border-slate-200">
           <div className="px-4 py-3 border-b border-slate-200">
@@ -88,7 +83,6 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
         </div>
       )}
 
-      {/* Требования к участнику (ЕИС) */}
       {requirements.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200">
           <div className="px-4 py-3 border-b border-slate-200 flex items-center gap-2">
@@ -125,7 +119,6 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
         </div>
       )}
 
-      {/* Дополнительные требования / квалификация */}
       {additionalRequirements.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200">
           <div className="px-4 py-3 border-b border-slate-200 flex items-center gap-2">
@@ -171,7 +164,6 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
         </div>
       )}
 
-      {/* Субподрядчики СМП/СОНКО */}
       {lot.lotSubContractors && (
         <div className="bg-white rounded-lg border border-slate-200">
           <div className="px-4 py-3 border-b border-slate-200">
@@ -189,7 +181,6 @@ export function ProcurementRequirements({ lot }: ProcurementRequirementsProps) {
         </div>
       )}
 
-      {/* Преференции */}
       {preferences.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200">
           <div className="px-4 py-3 border-b border-slate-200">

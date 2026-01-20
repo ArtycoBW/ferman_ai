@@ -12,14 +12,11 @@ interface LotObjectsPanelProps {
 export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
   if (!lot) return null
 
-  // Get delivery places from all customers
   const customers = lot.customers?.customer || []
-  // Handle both array and object with deliveryPlace key structures
   const deliveryPlaces = customers.flatMap(c => {
     const places = c.deliveryPlaces
     if (!places) return []
     if (Array.isArray(places)) return places
-    // If it's an object with deliveryPlace array inside
     if (typeof places === 'object' && 'deliveryPlace' in places) {
       const inner = (places as { deliveryPlace: unknown }).deliveryPlace
       return Array.isArray(inner) ? inner : []
@@ -90,7 +87,6 @@ export const LotObjectsPanel = ({ lot }: LotObjectsPanelProps) => {
           <CardContent>
             <div className="space-y-3">
               {deliveryPlaces.map((place, idx) => {
-                // Safely extract string values
                 const deliveryPlaceText = typeof place?.deliveryPlace === 'string' ? place.deliveryPlace : null
                 const garAddress = typeof place?.GARAddress === 'string' ? place.GARAddress : null
                 const countryName = typeof place?.countryName === 'string' ? place.countryName : null

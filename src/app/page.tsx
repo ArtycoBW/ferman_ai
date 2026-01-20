@@ -85,7 +85,6 @@ function HomePageContent() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Header />
-      {/* Grid background */}
       <div className="flex-1 relative">
         <div 
           className="absolute inset-0 opacity-[0.03]"

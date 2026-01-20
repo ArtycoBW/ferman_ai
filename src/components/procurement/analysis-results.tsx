@@ -33,7 +33,7 @@ function getRuleIcon(status: RuleStatus, riskType: RiskType) {
   if (riskType === 'violation') {
     return <AlertCircle className="h-5 w-5 text-red-500" />
   }
-  if (riskType === 'risk') {
+  if (riskType === 'risk' || riskType === 'inconsistency') {
     return <AlertTriangle className="h-5 w-5 text-amber-500" />
   }
   return <Info className="h-5 w-5 text-blue-500" />
@@ -42,7 +42,7 @@ function getRuleIcon(status: RuleStatus, riskType: RiskType) {
 function getRuleBadgeVariant(status: RuleStatus, riskType: RiskType, severity: Severity): 'destructive' | 'default' | 'secondary' | 'outline' {
   if (status === 'ok') return 'outline'
   if (riskType === 'violation') return 'destructive'
-  if (riskType === 'risk') return 'default'
+  if (riskType === 'risk' || riskType === 'inconsistency') return 'default'
   return 'secondary'
 }
 
@@ -86,7 +86,7 @@ function RuleCard({ rule, isExpanded, onToggle }: { rule: RuleResult; isExpanded
   const isTriggered = rule.status === 'triggered'
 
   return (
-    <Card className={`transition-all ${isTriggered && rule.risk_type === 'violation' ? 'border-red-200 bg-red-50/30' : isTriggered && rule.risk_type === 'risk' ? 'border-amber-200 bg-amber-50/30' : ''}`}>
+    <Card className={`transition-all ${isTriggered && rule.risk_type === 'violation' ? 'border-red-200 bg-red-50/30' : isTriggered && (rule.risk_type === 'risk' || rule.risk_type === 'inconsistency') ? 'border-amber-200 bg-amber-50/30' : ''}`}>
       <CardContent className="p-4">
         <button
           onClick={onToggle}
@@ -115,12 +115,6 @@ function RuleCard({ rule, isExpanded, onToggle }: { rule: RuleResult; isExpanded
 
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-border/50 space-y-3">
-            {rule.description && (
-              <div>
-                <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Описание</div>
-                <p className="text-sm">{rule.description}</p>
-              </div>
-            )}
             {rule.law_refs.length > 0 && (
               <div>
                 <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Ссылки на законодательство</div>
@@ -152,7 +146,7 @@ function RulesTab({ result }: { result: AnalysisResult }) {
 
   const stats = useMemo(() => {
     const violations = rules.filter(r => r.status === 'triggered' && r.risk_type === 'violation').length
-    const risks = rules.filter(r => r.status === 'triggered' && r.risk_type === 'risk').length
+    const risks = rules.filter(r => r.status === 'triggered' && (r.risk_type === 'risk' || r.risk_type === 'inconsistency')).length
     const ok = rules.filter(r => r.status === 'ok').length
     const info = rules.filter(r => r.status === 'triggered' && r.risk_type === 'info').length
     return { violations, risks, ok, info, total: rules.length }
@@ -163,7 +157,7 @@ function RulesTab({ result }: { result: AnalysisResult }) {
       case 'violations':
         return rules.filter(r => r.status === 'triggered' && r.risk_type === 'violation')
       case 'risks':
-        return rules.filter(r => r.status === 'triggered' && (r.risk_type === 'risk' || r.risk_type === 'info'))
+        return rules.filter(r => r.status === 'triggered' && (r.risk_type === 'risk' || r.risk_type === 'inconsistency' || r.risk_type === 'info'))
       case 'ok':
         return rules.filter(r => r.status === 'ok')
       default:
@@ -173,16 +167,13 @@ function RulesTab({ result }: { result: AnalysisResult }) {
 
   const sortedRules = useMemo(() => {
     return [...filteredRules].sort((a, b) => {
-      // Sort by status first (triggered before ok)
       if (a.status !== b.status) {
         return a.status === 'triggered' ? -1 : 1
       }
-      // Then by risk type (violation > risk > info)
-      const riskOrder = { violation: 0, risk: 1, info: 2 }
+      const riskOrder: Record<string, number> = { violation: 0, risk: 1, inconsistency: 2, info: 3 }
       if (a.risk_type !== b.risk_type) {
         return riskOrder[a.risk_type] - riskOrder[b.risk_type]
       }
-      // Then by severity (high > medium > low)
       const severityOrder = { high: 0, medium: 1, low: 2 }
       return severityOrder[a.severity] - severityOrder[b.severity]
     })
@@ -202,7 +193,6 @@ function RulesTab({ result }: { result: AnalysisResult }) {
 
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={`cursor-pointer transition-all ${filter === 'violations' ? 'ring-2 ring-red-500' : ''}`} onClick={() => setFilter(filter === 'violations' ? 'all' : 'violations')}>
           <CardContent className="p-4">
@@ -250,7 +240,6 @@ function RulesTab({ result }: { result: AnalysisResult }) {
         </Card>
       </div>
 
-      {/* Rules List */}
       <div className="space-y-3">
         {sortedRules.length === 0 ? (
           <Card>

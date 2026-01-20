@@ -14,7 +14,6 @@ interface TariffsDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-// Хардкод данных для отображения (API может не возвращать все поля)
 const tariffDetails: Record<string, {
   description: string
   price: string
@@ -136,13 +135,11 @@ export function TariffsDialog({ open, onOpenChange }: TariffsDialogProps) {
                     </div>
                   )}
                   
-                  {/* Название и описание */}
                   <div className="mb-4">
                     <h3 className="text-lg font-semibold text-slate-900">{tariff.name}</h3>
                     <p className="text-sm text-slate-500 mt-1">{details.description}</p>
                   </div>
                   
-                  {/* Цена */}
                   <div className="mb-4">
                     <span className="text-2xl font-bold text-slate-900">{details.price}</span>
                     {details.priceNote && (
@@ -150,12 +147,10 @@ export function TariffsDialog({ open, onOpenChange }: TariffsDialogProps) {
                     )}
                   </div>
                   
-                  {/* Лимит токенов */}
                   <div className="mb-4 px-3 py-2 bg-slate-100 rounded-lg text-sm text-slate-700">
                     Лимит: {formatTokenLimit(tariff.token_limit, tariff.name)}
                   </div>
                   
-                  {/* Фичи */}
                   <div className="flex-1 space-y-2 mb-4">
                     {details.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start gap-2 text-sm">
@@ -171,7 +166,6 @@ export function TariffsDialog({ open, onOpenChange }: TariffsDialogProps) {
                     ))}
                   </div>
                   
-                  {/* Кнопка */}
                   <Button
                     variant={isCurrent ? 'outline' : details.buttonVariant}
                     className={cn(
@@ -187,7 +181,6 @@ export function TariffsDialog({ open, onOpenChange }: TariffsDialogProps) {
             })}
           </div>
 
-          {/* Докупка токенов */}
           <div className="border border-slate-200 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

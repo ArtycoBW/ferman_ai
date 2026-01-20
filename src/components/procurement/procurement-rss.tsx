@@ -36,15 +36,12 @@ export function ProcurementRSS({ purchaseId }: ProcurementRSSProps) {
       const description = item.querySelector('description')?.textContent || ''
       const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString()
 
-      // Extract event description from description
       const eventMatch = description.match(/<strong>Описание события:<\/strong>\s*([^<]+)/)
       const eventDescription = eventMatch ? eventMatch[1].trim() : ''
 
-      // Determine status based on event description
       let status: 'violation' | 'risk' | 'ok' = 'ok'
       let severity: 'high' | 'medium' | 'low' = 'low'
 
-      // Check for keywords that indicate status
       if (eventDescription.includes('нарушение') || eventDescription.includes('отклонен')) {
         status = 'violation'
         severity = 'high'
