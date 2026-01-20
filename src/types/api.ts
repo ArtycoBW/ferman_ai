@@ -404,6 +404,7 @@ export interface RuleResult {
 
 export interface RuleResults {
   applicable_rules: RuleResult[]
+  hints?: RuleResult[]
 }
 
 export interface AnalysisResult {

@@ -12,7 +12,7 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronUp,
-  Filter,
+  Lightbulb,
   Download,
   Loader2
 } from 'lucide-react'
@@ -24,7 +24,7 @@ interface AnalysisResultsProps {
   taskId?: string
 }
 
-type FilterType = 'all' | 'violations' | 'risks' | 'ok'
+type FilterType = 'all' | 'violations' | 'risks' | 'ok' | 'hints'
 
 function getRuleIcon(status: RuleStatus, riskType: RiskType) {
   if (status === 'ok') {
@@ -143,14 +143,15 @@ function RulesTab({ result }: { result: AnalysisResult }) {
   const [expandedRules, setExpandedRules] = useState<Set<string>>(new Set())
 
   const rules = result.rule_results.applicable_rules
+  const hints = result.rule_results.hints || []
 
   const stats = useMemo(() => {
     const violations = rules.filter(r => r.status === 'triggered' && r.risk_type === 'violation').length
     const risks = rules.filter(r => r.status === 'triggered' && (r.risk_type === 'risk' || r.risk_type === 'inconsistency')).length
     const ok = rules.filter(r => r.status === 'ok').length
     const info = rules.filter(r => r.status === 'triggered' && r.risk_type === 'info').length
-    return { violations, risks, ok, info, total: rules.length }
-  }, [rules])
+    return { violations, risks, ok, info, hints: hints.length }
+  }, [rules, hints])
 
   const filteredRules = useMemo(() => {
     switch (filter) {
@@ -160,10 +161,12 @@ function RulesTab({ result }: { result: AnalysisResult }) {
         return rules.filter(r => r.status === 'triggered' && (r.risk_type === 'risk' || r.risk_type === 'inconsistency' || r.risk_type === 'info'))
       case 'ok':
         return rules.filter(r => r.status === 'ok')
+      case 'hints':
+        return hints
       default:
         return rules
     }
-  }, [rules, filter])
+  }, [rules, hints, filter])
 
   const sortedRules = useMemo(() => {
     return [...filteredRules].sort((a, b) => {
@@ -227,13 +230,13 @@ function RulesTab({ result }: { result: AnalysisResult }) {
             </div>
           </CardContent>
         </Card>
-        <Card className={`cursor-pointer transition-all ${filter === 'all' ? 'ring-2 ring-primary' : ''}`} onClick={() => setFilter('all')}>
+        <Card className={`cursor-pointer transition-all ${filter === 'hints' ? 'ring-2 ring-purple-500' : ''}`} onClick={() => setFilter(filter === 'hints' ? 'all' : 'hints')}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-primary" />
+              <Lightbulb className="h-5 w-5 text-purple-500" />
               <div>
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <div className="text-xs text-muted-foreground">Всего правил</div>
+                <div className="text-2xl font-bold text-purple-600">{stats.hints}</div>
+                <div className="text-xs text-muted-foreground">Подсказки</div>
               </div>
             </div>
           </CardContent>
