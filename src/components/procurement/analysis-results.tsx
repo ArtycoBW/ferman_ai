@@ -82,11 +82,11 @@ function MarkdownContent({ content }: { content: string }) {
   )
 }
 
-function RuleCard({ rule, isExpanded, onToggle }: { rule: RuleResult; isExpanded: boolean; onToggle: () => void }) {
+function RuleCard({ rule, isExpanded, onToggle, isHint }: { rule: RuleResult; isExpanded: boolean; onToggle: () => void; isHint?: boolean }) {
   const isTriggered = rule.status === 'triggered'
 
   return (
-    <Card className={`transition-all ${isTriggered && rule.risk_type === 'violation' ? 'border-red-200 bg-red-50/30' : isTriggered && (rule.risk_type === 'risk' || rule.risk_type === 'inconsistency') ? 'border-amber-200 bg-amber-50/30' : ''}`}>
+    <Card className={`transition-all ${isHint ? 'border-purple-200 bg-purple-50/30' : isTriggered && rule.risk_type === 'violation' ? 'border-red-200 bg-red-50/30' : isTriggered && (rule.risk_type === 'risk' || rule.risk_type === 'inconsistency') ? 'border-amber-200 bg-amber-50/30' : ''}`}>
       <CardContent className="p-4">
         <button
           onClick={onToggle}
@@ -94,7 +94,7 @@ function RuleCard({ rule, isExpanded, onToggle }: { rule: RuleResult; isExpanded
         >
           <div className="flex items-start gap-3">
             <div className="mt-0.5">
-              {getRuleIcon(rule.status, rule.risk_type)}
+              {isHint ? <Lightbulb className="h-5 w-5 text-purple-500" /> : getRuleIcon(rule.status, rule.risk_type)}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -257,6 +257,7 @@ function RulesTab({ result }: { result: AnalysisResult }) {
               rule={rule}
               isExpanded={expandedRules.has(rule.rule_id)}
               onToggle={() => toggleRule(rule.rule_id)}
+              isHint={filter === 'hints'}
             />
           ))
         )}

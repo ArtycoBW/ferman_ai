@@ -35,13 +35,11 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
     })
   }
 
-  const requirements = lot.requirements?.requirement || []
+  const requirements = lot.requirements || []
   const preferences = lot.preferenses?.preferense || []
   const customers = lot.customers?.customer || []
   const enforcement = customers[0]?.enforcement
-  const additionalRequirements = requirements.filter(
-    r => r.addRequirements && r.addRequirements.length > 0
-  )
+  const additionalRequirements = lot.addRequirements || []
 
   const computedApplicationAmount = enforcement?.applicationGuaranteeAmount ?? null
   const computedContractAmount = enforcement?.contractGuaranteeAmount ?? null
@@ -93,97 +91,91 @@ export const LotParticipationPanel = ({ lot }: LotParticipationPanelProps) => {
         </Card>
       )}
 
-      {requirements.length > 0 && (
+      {(requirements.length > 0 || additionalRequirements.length > 0) && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              Требования к участнику (ЕИС)
-              <Badge variant="secondary" className="text-xs">{requirements.length}</Badge>
+              Требования к участнику
+              <Badge variant="secondary" className="text-xs">
+                {requirements.length + additionalRequirements.length}
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {requirements.map((req, idx) => (
-                <div key={idx} className="border rounded-lg">
-                  <button
-                    onClick={() => toggleReq(idx)}
-                    className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-slate-900">{req.name}</span>
-                      <Badge variant="outline" className="ml-2 text-xs">{req.code}</Badge>
-                    </div>
-                    {expandedReqs.has(idx) ? (
-                      <ChevronUp className="h-4 w-4 text-slate-400" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-slate-400" />
-                    )}
-                  </button>
-                  {expandedReqs.has(idx) && (
-                    <div className="px-3 pb-3 text-sm text-slate-600 border-l-2 border-primary/30 ml-3 whitespace-pre-wrap">
-                      {req.content || (
-                        <span className="italic text-slate-400">
-                          Не указано (данных в источнике нет)
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {additionalRequirements.length > 0 && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              Дополнительные требования / квалификация
-              <Badge variant="secondary" className="text-xs">{additionalRequirements.length}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {additionalRequirements.map((req, idx) => (
-                <div key={idx} className="border rounded-lg">
-                  <button
-                    onClick={() => toggleAddReq(idx)}
-                    className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-slate-900">
-                        {req.addRequirements && req.addRequirements[0]?.name ? req.addRequirements[0].name : req.name}
-                      </span>
-                      <Badge variant="outline" className="ml-2 text-xs">
-                        {req.addRequirements && req.addRequirements[0]?.code ? req.addRequirements[0].code : req.code}
-                      </Badge>
-                    </div>
-                    {expandedAddReqs.has(idx) ? (
-                      <ChevronUp className="h-4 w-4 text-slate-400" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-slate-400" />
-                    )}
-                  </button>
-                  {expandedAddReqs.has(idx) && (
-                    <div className="px-3 pb-3">
-                      <div className="text-xs text-slate-500 mb-2 p-2 bg-slate-50 rounded">
-                        <span className="font-medium">Базовое: </span>
-                        {req.code} {req.name}
-                      </div>
-                      {req.addRequirements?.map((addReq, addIdx) => (
-                        <div key={addIdx} className="text-sm text-slate-600 border-l-2 border-primary/30 pl-3 whitespace-pre-wrap">
-                          {addReq.content || (
-                            <span className="italic text-slate-400">
-                              Не указано (данных в источнике нет)
-                            </span>
+            <div className="space-y-4">
+              {requirements.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wide">
+                    Требования (ЕИС)
+                  </h3>
+                  <div className="space-y-2">
+                    {requirements.map((req, idx) => (
+                      <div key={idx} className="border rounded-lg">
+                        <button
+                          onClick={() => toggleReq(idx)}
+                          className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="flex-1">
+                            <span className="text-sm font-medium text-slate-900">{req.name}</span>
+                            <Badge variant="outline" className="ml-2 text-xs">{req.code}</Badge>
+                          </div>
+                          {expandedReqs.has(idx) ? (
+                            <ChevronUp className="h-4 w-4 text-slate-400" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 text-slate-400" />
                           )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        </button>
+                        {expandedReqs.has(idx) && (
+                          <div className="px-3 mb-3 text-sm text-slate-600 border-l-2 border-primary/30 ml-3 whitespace-pre-wrap">
+                            {req.content || (
+                              <span className="italic text-slate-400">
+                                Не указано (данных в источнике нет)
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              )}
+
+              {additionalRequirements.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wide">
+                    Дополнительные требования / квалификация
+                  </h3>
+                  <div className="space-y-2">
+                    {additionalRequirements.map((addReq, idx) => (
+                      <div key={idx} className="border rounded-lg">
+                        <button
+                          onClick={() => toggleAddReq(idx)}
+                          className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="flex-1">
+                            <span className="text-sm font-medium text-slate-900">{addReq.name}</span>
+                            <Badge variant="outline" className="ml-2 text-xs">{addReq.code}</Badge>
+                          </div>
+                          {expandedAddReqs.has(idx) ? (
+                            <ChevronUp className="h-4 w-4 text-slate-400" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 text-slate-400" />
+                          )}
+                        </button>
+                        {expandedAddReqs.has(idx) && (
+                          <div className="px-3 mb-3 text-sm text-slate-600 border-l-2 border-primary/30 ml-3 whitespace-pre-wrap">
+                            {addReq.content || (
+                              <span className="italic text-slate-400">
+                                Не указано (данных в источнике нет)
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

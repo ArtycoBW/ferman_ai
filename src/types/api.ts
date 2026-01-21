@@ -257,12 +257,8 @@ export interface Requirement {
   code: string
   name: string
   content: string | null
-  addRequirements: AddRequirement[] | null
 }
 
-export interface Requirements {
-  requirement: Requirement[]
-}
 
 export interface Preference {
   code: string
@@ -298,7 +294,8 @@ export interface Lot {
   lotSubContractors: boolean | null
   purchaseObjects: PurchaseObjects
   customers: Customers
-  requirements: Requirements
+  requirements: Requirement[] | null
+  addRequirements: AddRequirement[] | null
   preferenses: Preferences
 }
 

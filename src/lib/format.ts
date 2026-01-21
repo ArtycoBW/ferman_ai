@@ -116,10 +116,8 @@ export function getDeadlineInfo(dateStr: string | null | undefined, cancelled: b
   }
 
   let colorClass: string
-  if (totalHours <= 48) {
+  if (totalHours <= 24) {
     colorClass = 'text-orange-500'
-  } else if (days <= 7) {
-    colorClass = 'text-amber-500'
   } else {
     colorClass = 'text-green-500'
   }
