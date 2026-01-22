@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ExternalLink, Copy, Check } from 'lucide-react'
-import { formatCurrency, formatDateTime, formatDate, formatBoolean, getDeadlineInfo, formatCurrencyWithPercent } from '@/lib/format'
+import { formatCurrency, formatDateTime, formatDate, formatBoolean, formatCurrencyWithPercent } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/hooks/use-toast'
 import type { ProcurementBody } from '@/types/api'
@@ -40,10 +40,28 @@ function InfoRow({ label, fieldName, value }: { label: string; fieldName: string
   )
 }
 
+function formatDeadlineText(hoursAgo: number | null, hoursLeft: number | null, isExpired: boolean): string {
+  const totalHours = isExpired ? hoursAgo : hoursLeft
+  if (totalHours == null) return ''
+
+  const days = Math.floor(totalHours / 24)
+  const hours = Math.floor(totalHours % 24)
+
+  const timeStr = days > 0 ? `${days} дн. ${hours} ч.` : `${hours} ч.`
+  return isExpired ? `истекло ${timeStr}` : `осталось ${timeStr}`
+}
+
 export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   const [copied, setCopied] = useState(false)
 
-  const deadlineInfo = getDeadlineInfo(procurement.procedureInfo?.summarizingDate, procurement.cancelled)
+  const deadlineStatus = procurement.computed.deadlineStatus
+  const deadlineColorClass = procurement.cancelled
+    ? 'text-muted-foreground'
+    : deadlineStatus.isExpired
+      ? 'text-red-500'
+      : (deadlineStatus.hoursLeft && deadlineStatus.hoursLeft <= 24)
+        ? 'text-orange-500'
+        : 'text-green-500'
   const lot = procurement.lots?.lot?.[0]
   const customer = lot?.customers?.customer?.[0]
   const enforcement = customer?.enforcement
@@ -112,9 +130,9 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         <KPICard
           label="Дедлайн подачи"
           fieldName="procedureEnd"
-          value={formatDateTime(procurement.procedureInfo?.summarizingDate)}
-          subValue={deadlineInfo.text}
-          colorClass={deadlineInfo.colorClass}
+          value={formatDateTime(procurement.procedureInfo?.end)}
+          subValue={procurement.cancelled ? 'Закупка отменена' : formatDeadlineText(deadlineStatus.hoursAgo, deadlineStatus.hoursLeft, deadlineStatus.isExpired)}
+          colorClass={deadlineColorClass}
         />
         <KPICard
           label="Обеспечение заявки"
