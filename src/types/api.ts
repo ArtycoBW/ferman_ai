@@ -326,6 +326,7 @@ export interface ComputedData {
   deadlineStatus: DeadlineStatus
   hasAdditionalRequirements: boolean
   chronology: Record<string, unknown>[]
+  isJointProcurement: boolean
 }
 
 export interface ProcurementBody {

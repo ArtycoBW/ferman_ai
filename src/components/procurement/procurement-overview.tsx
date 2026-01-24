@@ -84,7 +84,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg border border-slate-200 p-4">
-        <div className="bg-amber-400 text-amber-900 px-3 py-2 rounded-md text-sm font-medium mb-3">
+        <div className="bg-blue-50 text-blue-700 px-3 py-2 rounded-md text-sm font-medium mb-3">
           {procurement.placingWay}
         </div>
 
@@ -109,6 +109,11 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
           {procurement.region && (
             <span className="px-2.5 py-1 rounded-md bg-slate-100 text-xs">
               {procurement.region}
+            </span>
+          )}
+          {procurement.computed.isJointProcurement && (
+            <span className="bg-violet-50 text-violet-700 px-2.5 py-1 rounded-md text-xs font-medium">
+              Совместная закупка
             </span>
           )}
         </div>
