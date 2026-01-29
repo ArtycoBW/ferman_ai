@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ExternalLink, Copy, Check } from 'lucide-react'
-import { formatCurrency, formatDateTime, formatDate, formatBoolean, formatCurrencyWithPercent } from '@/lib/format'
+import { formatCurrency, formatRuDateTime, formatRuDate, formatBoolean, formatCurrencyWithPercent } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/hooks/use-toast'
 import type { ProcurementBody } from '@/types/api'
@@ -135,7 +135,7 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
         <KPICard
           label="Дедлайн подачи"
           fieldName="procedureEnd"
-          value={formatDateTime(procurement.procedureInfo?.end)}
+          value={formatRuDateTime(procurement.procedureInfo?.end)}
           subValue={procurement.cancelled ? 'Закупка отменена' : formatDeadlineText(deadlineStatus.hoursAgo, deadlineStatus.hoursLeft, deadlineStatus.isExpired)}
           colorClass={deadlineColorClass}
         />
@@ -181,30 +181,30 @@ export function ProcurementOverview({ procurement }: ProcurementOverviewProps) {
           <div className="p-4">
             <h4 className="text-sm font-medium text-slate-500 mb-3">Сроки</h4>
             <div>
-              <InfoRow 
-                label="Начало подачи" 
-                fieldName="procedureStart" 
-                value={formatDateTime(procurement.procedureInfo?.start)} 
+              <InfoRow
+                label="Начало подачи"
+                fieldName="procedureStart"
+                value={formatRuDateTime(procurement.procedureInfo?.start)}
               />
               {procurement.procedureInfo?.secondPartsDate && (
-                <InfoRow 
-                  label="Рассмотрение 2-х частей" 
-                  fieldName="procedureSecondPartsDate" 
-                  value={formatDate(procurement.procedureInfo?.secondPartsDate)} 
+                <InfoRow
+                  label="Рассмотрение 2-х частей"
+                  fieldName="procedureSecondPartsDate"
+                  value={formatRuDate(procurement.procedureInfo?.secondPartsDate)}
                 />
               )}
               {procurement.procedureInfo?.summarizingDate && (
-                <InfoRow 
-                  label="Подведение итогов" 
-                  fieldName="procedureSummarizingDate" 
-                  value={formatDate(procurement.procedureInfo?.summarizingDate)} 
+                <InfoRow
+                  label="Подведение итогов"
+                  fieldName="procedureSummarizingDate"
+                  value={formatRuDate(procurement.procedureInfo?.summarizingDate)}
                 />
               )}
               {(procurement.procedureInfo?.deliveryTermStart || procurement.procedureInfo?.deliveryTermEnd) && (
                 <InfoRow
                   label="Период выполнения"
                   fieldName="deliveryTermStart, deliveryTermEnd"
-                  value={`${formatDate(procurement.procedureInfo?.deliveryTermStart)} — ${formatDate(procurement.procedureInfo?.deliveryTermEnd)}`}
+                  value={`${formatRuDate(procurement.procedureInfo?.deliveryTermStart)} — ${formatRuDate(procurement.procedureInfo?.deliveryTermEnd)}`}
                 />
               )}
             </div>

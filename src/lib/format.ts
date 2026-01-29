@@ -72,22 +72,24 @@ export function parseAnyDateToTs(input?: string): number | null {
 
   const s = input.trim()
 
+  const ruMatch = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
+  if (ruMatch) {
+    const dd = Number(ruMatch[1])
+    const mm = Number(ruMatch[2])
+    const yyyy = Number(ruMatch[3])
+    const hh = ruMatch[4] ? Number(ruMatch[4]) : 0
+    const mi = ruMatch[5] ? Number(ruMatch[5]) : 0
+    const ss = ruMatch[6] ? Number(ruMatch[6]) : 0
+
+    const d = new Date(yyyy, mm - 1, dd, hh, mi, ss, 0)
+    const ts = d.getTime()
+    return Number.isNaN(ts) ? null : ts
+  }
+
   const isoTs = Date.parse(s)
   if (!Number.isNaN(isoTs)) return isoTs
 
-  const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/)
-  if (!m) return null
-
-  const dd = Number(m[1])
-  const mm = Number(m[2])
-  const yyyy = Number(m[3])
-  const hh = m[4] ? Number(m[4]) : 0
-  const mi = m[5] ? Number(m[5]) : 0
-  const ss = m[6] ? Number(m[6]) : 0
-
-  const d = new Date(yyyy, mm - 1, dd, hh, mi, ss, 0)
-  const ts = d.getTime()
-  return Number.isNaN(ts) ? null : ts
+  return null
 }
 
 export function getDeadlineInfo(dateStr: string | null | undefined, cancelled: boolean) {
@@ -140,4 +142,32 @@ export function formatFileSize(sizeStr: string | null | undefined): string {
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} КБ`
   if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} МБ`
   return `${(size / (1024 * 1024 * 1024)).toFixed(1)} ГБ`
+}
+
+function pad2(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
+export function formatRuDateTime(input?: string | null): string {
+  if (!input) return '—'
+
+  const ts = parseAnyDateToTs(input)
+  if (ts == null) return input.trim()
+
+  const d = new Date(ts)
+  const datePart = `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`
+  const hasTime = d.getHours() !== 0 || d.getMinutes() !== 0 || d.getSeconds() !== 0
+
+  if (!hasTime) return datePart
+  return `${datePart} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+}
+
+export function formatRuDate(input?: string | null): string {
+  if (!input) return '—'
+
+  const ts = parseAnyDateToTs(input)
+  if (ts == null) return input.trim()
+
+  const d = new Date(ts)
+  return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`
 }

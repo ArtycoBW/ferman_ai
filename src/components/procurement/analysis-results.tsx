@@ -63,19 +63,99 @@ function getSeverityColor(severity: Severity): string {
 }
 
 function MarkdownContent({ content }: { content: string }) {
+  const formatContent = (text: string) => {
+    const lines = text.split('\n')
+    const result: string[] = []
+    let inList = false
+
+    for (const line of lines) {
+      const trimmed = line.trim()
+
+      // Пустая строка
+      if (!trimmed) {
+        if (inList) {
+          result.push('</ul>')
+          inList = false
+        }
+        result.push('<div class="h-3"></div>')
+        continue
+      }
+
+      // Заголовки с ## и номерами (## 1) Краткая информация...)
+      const mdHeaderMatch = trimmed.match(/^#{1,3}\s*(\d+)\)\s+(.+)$/)
+      if (mdHeaderMatch) {
+        if (inList) {
+          result.push('</ul>')
+          inList = false
+        }
+        result.push(`<h3 class="text-base font-semibold mt-4 mb-2 text-slate-800">${mdHeaderMatch[1]}. ${mdHeaderMatch[2]}</h3>`)
+        continue
+      }
+
+      // Заголовки только с номерами (1) Краткая информация...)
+      const headerMatch = trimmed.match(/^(\d+)\)\s+(.+)$/)
+      if (headerMatch) {
+        if (inList) {
+          result.push('</ul>')
+          inList = false
+        }
+        result.push(`<h3 class="text-base font-semibold mt-4 mb-2 text-slate-800">${headerMatch[1]}. ${headerMatch[2]}</h3>`)
+        continue
+      }
+
+      // Обычные markdown заголовки (## Заголовок)
+      const plainMdHeaderMatch = trimmed.match(/^(#{1,3})\s+(.+)$/)
+      if (plainMdHeaderMatch) {
+        if (inList) {
+          result.push('</ul>')
+          inList = false
+        }
+        const level = plainMdHeaderMatch[1].length
+        const className = level === 1
+          ? 'text-lg font-semibold mt-5 mb-3 text-slate-900'
+          : 'text-base font-semibold mt-4 mb-2 text-slate-800'
+        result.push(`<h${level + 2} class="${className}">${plainMdHeaderMatch[2]}</h${level + 2}>`)
+        continue
+      }
+
+      // Буллеты с •
+      const bulletMatch = trimmed.match(/^[•\-]\s+(.+)$/)
+      if (bulletMatch) {
+        if (!inList) {
+          result.push('<ul class="list-disc pl-6 my-2 space-y-1">')
+          inList = true
+        }
+        result.push(`<li class="text-slate-700">${bulletMatch[1]}</li>`)
+        continue
+      }
+
+      // Обычный текст
+      if (inList) {
+        result.push('</ul>')
+        inList = false
+      }
+
+      // Жирный текст
+      let formatted = trimmed
+        .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-slate-800">$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+
+      result.push(`<p class="mb-2 text-slate-700">${formatted}</p>`)
+    }
+
+    if (inList) {
+      result.push('</ul>')
+    }
+
+    return result.join('')
+  }
+
   return (
     <div className="prose prose-sm max-w-none">
       <div
-        className="whitespace-pre-wrap text-slate-700 leading-relaxed"
+        className="text-slate-700 leading-relaxed"
         dangerouslySetInnerHTML={{
-          __html: content
-            .replace(/###\s+(.*?)$/gm, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
-            .replace(/##\s+(.*?)$/gm, '<h2 class="text-xl font-semibold mt-6 mb-3">$1</h2>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/^- (.*?)$/gm, '<li class="ml-4">$1</li>')
-            .replace(/^(\d+)\.\s+(.*?)$/gm, '<li class="ml-4">$2</li>')
-            .replace(/\n\n/g, '</p><p class="mb-2">')
+          __html: formatContent(content)
         }}
       />
     </div>
