@@ -206,6 +206,11 @@ export interface PurchaseObject {
   quantity: number | null
   price: number | null
   sum: number | null
+  preferenseRF: boolean
+  restrictForeign: boolean
+  prohibitionForeign: boolean
+  imposibilityProhibition: boolean
+  reasonImposibilityProhibition: string
 }
 
 export interface DeliveryPlace {
